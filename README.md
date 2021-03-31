@@ -17,7 +17,8 @@ Component that syns data from teamleader api into a PostgresQL DB.
 * `psycopg2` - communicates with the PostgreSQL server
 * `fastapi` - exposes json api to start deewee and avo sync jobs
 * `uvicorn` - ASGI server implementation, using uvloop used for running fastapi server
-* `requests` - Teamleader api calls implemented using requests
+* `argh` - Command line parsing for CLI sync calls
+* `requests` - Teamleader api calls with oauth2 are implemented using requests
 
 
 ## Fast-API

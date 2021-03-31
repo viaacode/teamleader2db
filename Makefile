@@ -15,8 +15,7 @@ help:
 	@echo "  test        run all the tests"
 	@echo "  dockertest  run all the tests in docker image like jenkins"
 	@echo "  coverage    run tests and generate coverage report"
-	@echo "  avosync     start AVO ldap synchronize job directly from command line"
-	@echo "  deeweesync  start DEEWEE ldap synchronize job directly from command line"
+	@echo "  sync 			 start Teamleader sync directly
 	@echo "  server      start uvicorn development server fast-api for synchronizing with ldap"
 	@echo ""
 
@@ -68,16 +67,10 @@ coverage:
 	python -m pytest --cov-config=.coveragerc --cov . .  --cov-report html --cov-report term
 
 
-.PHONY: deeweesync 
-deeweesync:
+.PHONY: sync 
+sync:
 	. python_env/bin/activate; \
-	python -m app.app deewee-sync-job
-
-
-.PHONY: avosync
-avosync:
-	. python_env/bin/activate; \
-	python -m app.app avo-sync-job
+	python -m app.app teamleader-sync
 
 
 .PHONY: server
