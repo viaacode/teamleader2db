@@ -15,7 +15,7 @@ help:
 	@echo "  test        run all the tests"
 	@echo "  dockertest  run all the tests in docker image like jenkins"
 	@echo "  coverage    run tests and generate coverage report"
-	@echo "  sync 			 start Teamleader sync directly
+	@echo "  sync 			 start Teamleader sync directly"
 	@echo "  server      start uvicorn development server fast-api for synchronizing with ldap"
 	@echo ""
 
