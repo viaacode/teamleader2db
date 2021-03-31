@@ -1,0 +1,7 @@
+viaa-chassis==0.2.0rc1
+ldap3==2.6.1
+psycopg2==2.8.4
+fastapi==0.63.0
+uvicorn==0.13.4
+argh==0.26.2
+requests==2.25.1
