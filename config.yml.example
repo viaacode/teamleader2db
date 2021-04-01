@@ -20,6 +20,12 @@ app:
     port: 5432
     sslmode: 'disable'
   table_names:
-    oauth_table: 'shared.teamleader_oauth'
-    companies_table: 'shared.tl_companies'
-    contacts_table: 'shared.tl_contacts'
+    oauth_table: 'tl_oauth'
+    companies_table: 'tl_companies'
+    contacts_table: 'tl_contacts'
+    departments_table: 'tl_departments'
+    events_table: 'tl_events'
+    invoices_table: 'tl_invoices'
+    projects_table: 'tl_projects'
+    users_table: 'tl_users'
+

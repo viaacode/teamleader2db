@@ -143,6 +143,7 @@ class TeamleaderClient:
             print('call to {} failed with code {}'.format(
                 path, res.status_code), flush=True)
             # __import__('pdb').set_trace()
+            return []
 
     def list_companies(self, page=1, page_size=20, updated_since=None):
         return self.request_page('/companies.list', page, page_size, updated_since)
@@ -151,7 +152,15 @@ class TeamleaderClient:
         return self.request_page('/contacts.list', page, page_size, updated_since)
 
     def list_departments(self, page=1, page_size=20, updated_since=None):
-        return self.request_page('/departments.list', page, page_size, updated_since)
+        # departments has no pagination! we want a similar interface however,
+        # so if page==2 we return []. otherwise our sync goes into infinite loop
+        # as the page param is ignored here and we always get back 3 of the same deps.
+        print(
+            f"list_departments: page={page} size={page_size} updated_since={updated_since}")
+        if page > 1:
+            return []
+        else:
+            return self.request_page('/departments.list', page, page_size, updated_since)
 
     def list_events(self, page=1, page_size=20, updated_since=None):
         return self.request_page('/events.list', page, page_size, updated_since)
