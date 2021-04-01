@@ -13,11 +13,11 @@ from app.comm.contacts import Contacts
 
 
 # TODO: these tables:
-#status['departments'] = state.app.contacts_status()
-#status['events'] = state.app.contacts_status()
-#status['invoices'] = state.app.contacts_status()
-#status['projects'] = state.app.contacts_status()
-#status['users'] = state.app.contacts_status()
+# status['departments'] = state.app.contacts_status()
+# status['events'] = state.app.contacts_status()
+# status['invoices'] = state.app.contacts_status()
+# status['projects'] = state.app.contacts_status()
+# status['users'] = state.app.contacts_status()
 
 
 import argh
@@ -43,7 +43,7 @@ class App:
         )
 
     def companies_sync(self, modified_since: datetime = None):
-        """ Syncs teamleader clients into target database 
+        """ Syncs teamleader clients into target database
 
             Arguments:
             modified_since -- Searches the LDAP results based on this parameter.
@@ -58,7 +58,7 @@ class App:
         return 'TODO'
 
     def contacts_sync(self, modified_since: datetime = None):
-        """ Syncs teamleader organizations into target database 
+        """ Syncs teamleader organizations into target database
 
             Arguments:
             modified_since -- Searches the LDAP results based on this parameter.

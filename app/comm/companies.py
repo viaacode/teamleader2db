@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import uuid
-from datetime import datetime
+# from datetime import datetime
 from app.comm.psql_wrapper import PostgresqlWrapper
 from app.comm.base_model import BaseModel
 

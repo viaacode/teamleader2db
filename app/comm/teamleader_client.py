@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import json
 import requests
 import time
 # from datetime import datetime, timezone
+# json
 
 # WARNING: watch out for rate limit of 100 calls per minute !
 # it will give HTTP 429 Too Many Requests error

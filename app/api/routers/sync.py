@@ -29,11 +29,11 @@ async def teamleader_sync_status():
     status = {}
     status['companies'] = state.app.companies_status()
     status['contacts'] = state.app.contacts_status()
-    #status['departments'] = state.app.contacts_status()
-    #status['events'] = state.app.contacts_status()
-    #status['invoices'] = state.app.contacts_status()
-    #status['projects'] = state.app.contacts_status()
-    #status['users'] = state.app.contacts_status()
+    # status['departments'] = state.app.contacts_status()
+    # status['events'] = state.app.contacts_status()
+    # status['invoices'] = state.app.contacts_status()
+    # status['projects'] = state.app.contacts_status()
+    # status['users'] = state.app.contacts_status()
     status['job_running'] = state.teamleader_running
 
     return status
