@@ -25,6 +25,7 @@ class TeamleaderClient:
         self.code = params['code']
         self.token = params['auth_token']
         self.refresh_token = params['refresh_token']
+        self.secret_code_state = params['secret_code_state']
         self.code_callback_completed = True
 
     def auth_code_request(self):
@@ -40,24 +41,34 @@ class TeamleaderClient:
         requests.get(auth_uri, params={
             'client_id': self.client_id,
             'response_type': 'code',
-            'redirect_uri': self.redirect_uri
+            'redirect_uri': self.redirect_uri,
+            'state': self.secret_code_state
         })
 
-        # bail out after 20 seconds
+        # bail out after 3 seconds
         tries = 1
         while not self.code_callback_completed:
-            if tries % 100 == 0:
-                raise Exception("auth_code_request timed out.")
-            time.sleep(0.2)
+            if tries % 30 == 0:
+                raise ValueError("auth_code_request timed out.")
+            time.sleep(0.1)
             tries += 1
 
-    # todo this should be linked to a route from api,
-    # and then this route is to be set in redirect_uri
+    # called with api route: /sync/oauth?code=x&state=y
+    def auth_code_callback(self, code, state):
+        print(f"received callback: code={code} state={state}", flush=True)
+        if state != self.secret_code_state:
+            return "code rejected"
 
-    def auth_code_callback(self, code):
-        self.code_callback_completed = True
-        self.code = code
-        self.auth_token_request()
+        try:
+            self.code_callback_completed = True
+            self.code = code
+
+            # self.code is updated, new fetch new token and refresh_token
+            self.auth_token_request()
+            return "code accepted"
+
+        except ValueError as e:
+            return 'code rejected: '+str(e)
 
     def handle_token_response(self, token_response):
         if token_response.status_code == 200:

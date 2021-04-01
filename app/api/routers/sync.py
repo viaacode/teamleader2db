@@ -5,9 +5,8 @@ from app.app import App as SyncApp
 router = APIRouter()
 
 
-class JobState:
+class Worker:
     def __init__(self):
-        self.counter = 0
         self.teamleader_running = False
         self.sync_app = SyncApp()
 
@@ -21,20 +20,26 @@ class JobState:
         self.teamleader_running = False
 
 
-state = JobState()
+worker = Worker()
+
+
+@router.get("/oauth", include_in_schema=False)
+def auth_callback(code: str, state: str = ''):
+    result = worker.app.auth_callback(code, state)
+    return result
 
 
 @router.get("/teamleader")
 async def teamleader_sync_status():
     status = {}
-    status['companies'] = state.app.companies_status()
-    status['contacts'] = state.app.contacts_status()
-    # status['departments'] = state.app.contacts_status()
-    # status['events'] = state.app.contacts_status()
-    # status['invoices'] = state.app.contacts_status()
-    # status['projects'] = state.app.contacts_status()
-    # status['users'] = state.app.contacts_status()
-    status['job_running'] = state.teamleader_running
+    status['companies'] = worker.app.companies_status()
+    status['contacts'] = worker.app.contacts_status()
+    # status['departments'] = worker.app.contacts_status()
+    # status['events'] = worker.app.contacts_status()
+    # status['invoices'] = worker.app.contacts_status()
+    # status['projects'] = worker.app.contacts_status()
+    # status['users'] = worker.app.contacts_status()
+    status['job_running'] = worker.teamleader_running
 
     return status
 
@@ -45,8 +50,8 @@ async def start_teamleader_sync(
     full_sync: Optional[bool] = False
 ):
 
-    if not state.teamleader_running:
-        background_tasks.add_task(state.teamleader_job, full_sync)
+    if not worker.teamleader_running:
+        background_tasks.add_task(worker.teamleader_job, full_sync)
         status = 'Teamleader sync started'
     else:
         status = 'Teamleader sync was already running'

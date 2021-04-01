@@ -42,6 +42,9 @@ class App:
             config.app_cfg['table_names']
         )
 
+    def auth_callback(self, code, state):
+        return self.tl_client.auth_code_callback(code, state)
+
     def companies_sync(self, modified_since: datetime = None):
         """ Syncs teamleader companies into target database
 

@@ -44,7 +44,9 @@ lint:
 
 .PHONY: format
 format:
-	@. python_env/bin/activate; scripts/autoformat_code
+	@. python_env/bin/activate; \
+	autopep8 --in-place -r app; \
+	autopep8 --in-place -r tests;
 
 .PHONY: test
 test:
