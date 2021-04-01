@@ -44,11 +44,12 @@ class TeamleaderClient:
             'redirect_uri': self.redirect_uri,
             'state': self.secret_code_state
         })
+        time.sleep(RATE_LIMIT_SLEEP)
 
-        # bail out after 3 seconds
+        # bail out after 8 seconds
         tries = 1
         while not self.code_callback_completed:
-            if tries % 30 == 0:
+            if tries % 80 == 0:
                 raise ValueError("auth_code_request timed out.")
             time.sleep(0.1)
             tries += 1
@@ -94,6 +95,7 @@ class TeamleaderClient:
                 'grant_type': 'authorization_code'
             }
         )
+        time.sleep(RATE_LIMIT_SLEEP)
 
         self.handle_token_response(r)
 
@@ -109,6 +111,7 @@ class TeamleaderClient:
                 'grant_type': 'refresh_token'
             }
         )
+        time.sleep(RATE_LIMIT_SLEEP)
 
         self.handle_token_response(r)
 
@@ -127,13 +130,12 @@ class TeamleaderClient:
             params['filter[updated_since]'] = updated_since
 
         res = requests.get(path, params=params, headers=headers)
-        time.sleep(RATE_LIMIT_SLEEP)
         if res.status_code == 401:
             self.auth_token_refresh()
-            time.sleep(RATE_LIMIT_SLEEP)
             headers = {'Authorization': "Bearer {}".format(self.token)}
             res = requests.get(path, params=params, headers=headers)
-            time.sleep(RATE_LIMIT_SLEEP)
+
+        time.sleep(RATE_LIMIT_SLEEP)
 
         if res.status_code == 200:
             return res.json()['data']
