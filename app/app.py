@@ -43,33 +43,49 @@ class App:
         )
 
     def companies_sync(self, modified_since: datetime = None):
-        """ Syncs teamleader clients into target database
+        """ Syncs teamleader companies into target database
 
             Arguments:
-            modified_since -- Searches the LDAP results based on this parameter.
-                              If None, it will retrieve all LDAP entries.
+            modified_since -- Filters teamleader results with updated_since
+                              If None, it will retrieve all teamleader entries.
         """
 
-        if not modified_since:
-            modified_since = self.companies.max_last_modified_timestamp()
+        # if not modified_since:
+        #     modified_since = self.companies.max_last_modified_timestamp()
 
-        logger.info("companies sync")
+        logger.info("companies sync started...")
+        page = 1
+        resp = [1]
+        total_synced = 0
+        while len(resp) > 0:
+            resp = self.tl_client.list_companies(page, 100, modified_since)
+            page += 1
+            total_synced += len(resp)
+            print(f"TODO: save {len(resp)} companies in db.", flush=True)
 
-        return 'TODO'
+        logger.info(f"Done, synchronized {total_synced} companies")
 
     def contacts_sync(self, modified_since: datetime = None):
-        """ Syncs teamleader organizations into target database
+        """ Syncs teamleader contacts into target database
 
             Arguments:
-            modified_since -- Searches the LDAP results based on this parameter.
-                              If None, it will retrieve all LDAP entries.
+            modified_since -- Filters teamleader results with updated_since
+                              If None, it will retrieve all teamleader entries.
         """
-        if not modified_since:
-            modified_since = self.contacts.max_last_modified_timestamp()
+        # if not modified_since:
+        #     modified_since = self.contacts.max_last_modified_timestamp()
 
-        logger.info("contacts sync")
-        # watch out for rate limit of 100 calls per minute !
-        return 'TODO'
+        logger.info("contacts sync...")
+        page = 1
+        resp = [1]
+        total_synced = 0
+        while len(resp) > 0:
+            resp = self.tl_client.list_contacts(page, 100, modified_since)
+            page += 1
+            print(f"TODO: save {len(resp)} contacts in db.", flush=True)
+            total_synced += len(resp)
+
+        logger.info(f"Done, synchronized {total_synced} contacts")
 
     def companies_status(self):
         return self.companies.status()

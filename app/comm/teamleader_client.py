@@ -57,6 +57,19 @@ class TeamleaderClient:
     def auth_code_callback(self, code):
         self.code_callback_completed = True
         self.code = code
+        self.auth_token_request()
+
+    def handle_token_response(self, token_response):
+        if token_response.status_code == 200:
+            response = token_response.json()
+            self.token = response['access_token']  # expires in 1 hour
+            self.refresh_token = response['refresh_token']
+
+            # TODO: store new tokens in database table auth_table!!!
+            print("auth_token:", self.token, flush=True)
+            print("\nrefresh_token:", self.refresh_token, flush=True)
+        else:
+            self.auth_code_request()
 
     def auth_token_request(self):
         """ use when auth_token_refresh fails """
@@ -71,12 +84,7 @@ class TeamleaderClient:
             }
         )
 
-        response = r.json()
-        print("auth_token_request response=", response, flush=True)
-        self.token = response['access_token']  # expires in 1 hour
-        self.refresh_token = response['refresh_token']
-
-        # TODO: if this fails, use auth_code_request to get new code to request new tokens
+        self.handle_token_response(r)
 
     def auth_token_refresh(self):
         """ to be called whenever we get 401 from expiry on api calls """
@@ -91,16 +99,7 @@ class TeamleaderClient:
             }
         )
 
-        response = r.json()
-        print("auth_token_refresh response status =",
-              r.status_code, r.text, flush=True)
-        self.token = response['access_token']  # expires in 1 hour
-        self.refresh_token = response['refresh_token']
-
-        # TODO: if this fails, use auth_token_request to get new code to request new tokens
-        # TODO: store new tokens here in database table auth_table!!!
-        print("auth_token:", self.token, flush=True)
-        print("\nrefresh_token:", self.refresh_token, flush=True)
+        self.handle_token_response(r)
 
     def request_page(self, resource_path, page=None, page_size=None, updated_since=None):
         path = self.api_uri + resource_path
@@ -128,9 +127,9 @@ class TeamleaderClient:
         if res.status_code == 200:
             return res.json()['data']
         else:
-            print('call to {} failed {}'.format(
+            print('call to {} failed with code {}'.format(
                 path, res.status_code), flush=True)
-            __import__('pdb').set_trace()
+            # __import__('pdb').set_trace()
 
     def list_companies(self, page=1, page_size=20, updated_since=None):
         return self.request_page('/companies.list', page, page_size, updated_since)
