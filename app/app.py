@@ -13,12 +13,11 @@ from app.comm.contacts import Contacts
 
 
 # TODO: these tables:
-    #status['departments'] = state.app.contacts_status()
-    #status['events'] = state.app.contacts_status()
-    #status['invoices'] = state.app.contacts_status()
-    #status['projects'] = state.app.contacts_status()
-    #status['users'] = state.app.contacts_status()
-
+#status['departments'] = state.app.contacts_status()
+#status['events'] = state.app.contacts_status()
+#status['invoices'] = state.app.contacts_status()
+#status['projects'] = state.app.contacts_status()
+#status['users'] = state.app.contacts_status()
 
 
 import argh
@@ -55,7 +54,7 @@ class App:
             modified_since = self.companies.max_last_modified_timestamp()
 
         logger.info("companies sync")
-        
+
         return 'TODO'
 
     def contacts_sync(self, modified_since: datetime = None):
@@ -68,9 +67,9 @@ class App:
         if not modified_since:
             modified_since = self.contacts.max_last_modified_timestamp()
 
-        logger.info("contactssync")
+        logger.info("contacts sync")
+        # watch out for rate limit of 100 calls per minute !
         return 'TODO'
-
 
     def companies_status(self):
         return self.companies.status()
@@ -92,9 +91,8 @@ class App:
 
         self.companies_sync()
         self.contacts_sync()
-        
-        logger.info("Teamleader sync completed")
 
+        logger.info("Teamleader sync completed")
 
     def main(self):
         try:

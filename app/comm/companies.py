@@ -49,5 +49,3 @@ class Companies(BaseModel):
 
     def max_last_modified_sql(self):
         return f'SELECT max(tl_modifytimestamp) FROM {self.table}'
-
-

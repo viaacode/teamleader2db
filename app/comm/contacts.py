@@ -62,7 +62,6 @@ class Contacts(BaseModel):
         )[0][0]
 
 
-
 #    def _prepare_vars_upsert(self, ldap_result, type: str) -> tuple:
 #        """Transforms an LDAP entry to pass to the psycopg2 execute function.
 #
@@ -111,4 +110,3 @@ class Contacts(BaseModel):
 #                type, '{"key": "value"}', date_time)
 #        self.postgresql_wrapper.execute(self.upsert_entities_sql(), vars)
 #
-

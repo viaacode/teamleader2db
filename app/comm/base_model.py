@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import uuid
 from datetime import datetime
 from app.comm.psql_wrapper import PostgresqlWrapper
@@ -53,5 +56,3 @@ class BaseModel:
 
     def count_type(self, type: str) -> int:
         return self.count_where('type = %s', (type,))
-
-

@@ -6,6 +6,12 @@ import requests
 import time
 # from datetime import datetime, timezone
 
+# WARNING: watch out for rate limit of 100 calls per minute !
+# it will give HTTP 429 Too Many Requests error
+# to avoid hitting the rate limit for now:
+RATE_LIMIT_SLEEP = 0.6
+
+
 class TeamleaderClient:
     """Acts as a client to query relevant information from Teamleader API"""
 
@@ -15,15 +21,16 @@ class TeamleaderClient:
         self.client_id = params['client_id']
         self.client_secret = params['client_secret']
         self.redirect_uri = params['redirect_uri']
-        self.code = params['code'] # TODO: fetch code from db, as this overrides the default
-        self.token = params['auth_token'] # TODO: fetch from db, as this is more recent
-        self.refresh_token = params['refresh_token'] # TODO: fetch from db, as this is more recent
+        # TODO: fetch code, auth_token, refresh_token from db, as this overrides the default
+        self.code = params['code']
+        self.token = params['auth_token']
+        self.refresh_token = params['refresh_token']
         self.code_callback_completed = True
 
     def auth_code_request(self):
         """ First request that results in a callback to redirect_uri that supplies a code
         for auth_token_request """
-        
+
         # we need to poll the self.code that should change after a callback
         self.code_callback_completed = False
 
@@ -44,9 +51,9 @@ class TeamleaderClient:
             time.sleep(0.2)
             tries += 1
 
-
-    # todo this should be linked to a route from api, 
+    # todo this should be linked to a route from api,
     # and then this route is to be set in redirect_uri
+
     def auth_code_callback(self, code):
         self.code_callback_completed = True
         self.code = code
@@ -66,7 +73,7 @@ class TeamleaderClient:
 
         response = r.json()
         print("auth_token_request response=", response, flush=True)
-        self.token = response['access_token'] # expires in 1 hour
+        self.token = response['access_token']  # expires in 1 hour
         self.refresh_token = response['refresh_token']
 
         # TODO: if this fails, use auth_code_request to get new code to request new tokens
@@ -85,8 +92,9 @@ class TeamleaderClient:
         )
 
         response = r.json()
-        print("auth_token_refresh response status =", r.status_code, flush=True)
-        self.token = response['access_token'] # expires in 1 hour
+        print("auth_token_refresh response status =",
+              r.status_code, r.text, flush=True)
+        self.token = response['access_token']  # expires in 1 hour
         self.refresh_token = response['refresh_token']
 
         # TODO: if this fails, use auth_token_request to get new code to request new tokens
@@ -94,57 +102,56 @@ class TeamleaderClient:
         print("auth_token:", self.token, flush=True)
         print("\nrefresh_token:", self.refresh_token, flush=True)
 
-
-    def get_page(self, resource_path, page=None, page_size=None):
+    def request_page(self, resource_path, page=None, page_size=None, updated_since=None):
         path = self.api_uri + resource_path
-        headers = {'Authorization': "Bearer {}".format(self.token)} 
+        headers = {'Authorization': "Bearer {}".format(self.token)}
         params = {}
-        if page or page_size:
-            if not page:
-                page=1
-            if not page_size:
-                page_size=20
+        if page:
+            params['page[number]'] = page
 
-            params = {
-                'page[number]': page,
-                'page[size]': page_size
-            }
+        if page_size:
+            params['page[size]'] = page_size
+
+        if updated_since:
+            # ex: '2021-03-29T16:44:33+00:00'
+            params['filter[updated_since]'] = updated_since
 
         res = requests.get(path, params=params, headers=headers)
+        time.sleep(RATE_LIMIT_SLEEP)
         if res.status_code == 401:
             self.auth_token_refresh()
-            headers = {'Authorization': "Bearer {}".format(self.token)} 
+            time.sleep(RATE_LIMIT_SLEEP)
+            headers = {'Authorization': "Bearer {}".format(self.token)}
             res = requests.get(path, params=params, headers=headers)
-                   
+            time.sleep(RATE_LIMIT_SLEEP)
+
         if res.status_code == 200:
             return res.json()['data']
         else:
-            print("call to {} failed status_code".format(path, res.status_code))
+            print('call to {} failed {}'.format(
+                path, res.status_code), flush=True)
             __import__('pdb').set_trace()
 
+    def list_companies(self, page=1, page_size=20, updated_since=None):
+        return self.request_page('/companies.list', page, page_size, updated_since)
 
-    def list_companies(self, page=1, page_size=20):
-        return self.get_page('/companies.list', page, page_size)
+    def list_contacts(self, page=1, page_size=20, updated_since=None):
+        return self.request_page('/contacts.list', page, page_size, updated_since)
 
-    def list_contacts(self, page=1, page_size=20):
-        return self.get_page('/contacts.list', page, page_size)
+    def list_departments(self, page=1, page_size=20, updated_since=None):
+        return self.request_page('/departments.list', page, page_size, updated_since)
 
+    def list_events(self, page=1, page_size=20, updated_since=None):
+        return self.request_page('/events.list', page, page_size, updated_since)
 
-    def list_departments(self, page=1, page_size=20):
-        return self.get_page('/departments.list', page, page_size)
+    def list_invoices(self, page=1, page_size=20, updated_since=None):
+        return self.request_page('/invoices.list', page, page_size, updated_since)
 
-    def list_events(self, page=1, page_size=20):
-        return self.get_page('/events.list', page, page_size)
+    def list_projects(self, page=1, page_size=20, updated_since=None):
+        return self.request_page('/projects.list', page, page_size, updated_since)
 
-    def list_invoices(self, page=1, page_size=20):
-        return self.get_page('/invoices.list', page, page_size)
-
-    def list_projects(self, page=1, page_size=20):
-        return self.get_page('/projects.list', page, page_size)
-
-    def list_users(self, page=1, page_size=20):
-        return self.get_page('/users.list', page, page_size)
+    def list_users(self, page=1, page_size=20, updated_since=None):
+        return self.request_page('/users.list', page, page_size, updated_since)
 
     def current_user(self):
-        return self.get_page('/users.me')
-
+        return self.request_page('/users.me')

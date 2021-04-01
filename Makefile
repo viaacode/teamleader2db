@@ -37,17 +37,13 @@ clean:
 
 .PHONY: lint
 lint:
-	@flake8 --max-line-length=120 --exclude=.git,python_env,__pycache__
+	@. python_env/bin/activate; \
+	flake8 --max-line-length=120 --exclude=.git,python_env,__pycache__
 
 
 .PHONY: format
 format:
-	@echo "TODO: for now just use autopep..."
-	# $(POETRY) run isort --profile=black --force-single-line-imports $(FOLDERS)
-	# $(POETRY) run autoflake -r -i --remove-all-unused-imports --remove-unused-variables --ignore-init-module-imports $(FOLDERS)
-	# $(POETRY) run isort --profile=black $(FOLDERS)
-	# $(POETRY) run black $(FOLDERS)
-
+	@. python_env/bin/activate; scripts/autoformat_code
 
 .PHONY: test
 test:
