@@ -43,6 +43,26 @@ class App:
     def auth_callback(self, code, state):
         return self.tl_client.auth_code_callback(code, state)
 
+    def resource_sync(self, name, tl_method, model, modified_since=None):
+        # TODO: fix ts format now its 2021-04-01 16:30:07.884493+02:00
+        # but see teamleader client, it should be other format...
+        # if not modified_since:
+        #     modified_since = model.max_last_modified_timestamp()
+
+        logger.info(f"{name} sync since {modified_since} started...")
+        page = 1
+        resp = [1]
+        total_synced = 0
+        while len(resp) > 0:
+            resp = tl_method(page, 100, modified_since)
+            if len(resp) > 0:
+                model.upsert_results([(resp, name)])
+                page += 1
+                total_synced += len(resp)
+                print(f"{name} synced = {len(resp)}", flush=True)
+
+        logger.info(f"Done, synchronized {total_synced} {name}")
+
     def companies_sync(self, modified_since: datetime = None):
         """ Syncs teamleader companies into target database
 
@@ -50,25 +70,8 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-
-        # fix ts format now its 2021-04-01 16:30:07.884493+02:00
-        # but see teamleader client, it should be other format...
-        # if not modified_since:
-        #     modified_since = self.companies.max_last_modified_timestamp()
-
-        logger.info(f"Companies sync since {modified_since} started...")
-        page = 1
-        resp = [1]
-        total_synced = 0
-        while len(resp) > 0:
-            resp = self.tl_client.list_companies(page, 100, modified_since)
-            if len(resp) > 0:
-                self.companies.upsert_results([(resp, "companies")])
-                page += 1
-                total_synced += len(resp)
-                print(f"companies synced = {total_synced}", flush=True)
-
-        logger.info(f"Done, synchronized {total_synced} companies")
+        self.resource_sync(
+            'companies', self.tl_client.list_companies, self.companies, modified_since)
 
     def contacts_sync(self, modified_since: datetime = None):
         """ Syncs teamleader contacts into target database
@@ -77,22 +80,8 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-        # if not modified_since:
-        #     modified_since = self.contacts.max_last_modified_timestamp()
-
-        logger.info(f"Contacts sync since {modified_since} started...")
-        page = 1
-        resp = [1]
-        total_synced = 0
-        while len(resp) > 0:
-            resp = self.tl_client.list_contacts(page, 100, modified_since)
-            if len(resp) > 0:
-                self.contacts.upsert_results([(resp, "contacts")])
-                page += 1
-                total_synced += len(resp)
-                print(f"contacts synced = {total_synced}", flush=True)
-
-        logger.info(f"Done, synchronized {total_synced} contacts")
+        self.resource_sync(
+            'contacts', self.tl_client.list_contacts, self.contacts, modified_since)
 
     def departments_sync(self, modified_since: datetime = None):
         """ Syncs teamleader departments into target database
@@ -101,22 +90,8 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-        # if not modified_since:
-        #     modified_since = self.contacts.max_last_modified_timestamp()
-
-        logger.info(f"departments sync since {modified_since} started...")
-        page = 1
-        resp = [1]
-        total_synced = 0
-        while len(resp) > 0:
-            resp = self.tl_client.list_departments(page, 100, modified_since)
-            if len(resp) > 0:
-                self.departments.upsert_results([(resp, "departments")])
-                page += 1
-                total_synced += len(resp)
-                print(f"departments synced = {total_synced}", flush=True)
-
-        logger.info(f"Done, synchronized {total_synced} departments")
+        self.resource_sync(
+            'departments', self.tl_client.list_departments, self.departments, modified_since)
 
     def events_sync(self, modified_since: datetime = None):
         """ Syncs teamleader events into target database
@@ -125,28 +100,38 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-        # if not modified_since:
-        #     modified_since = self.contacts.max_last_modified_timestamp()
+        self.resource_sync('events', self.tl_client.list_events,
+                           self.events, modified_since)
 
-        logger.info(f"events sync since {modified_since} started...")
-        page = 1
-        resp = [1]
-        total_synced = 0
-        while len(resp) > 0:
-            resp = self.tl_client.list_events(page, 100, modified_since)
-            if len(resp) > 0:
-                self.events.upsert_results([(resp, "events")])
-                page += 1
-                total_synced += len(resp)
-                print(f"events synced = {total_synced}", flush=True)
+    def invoices_sync(self, modified_since: datetime = None):
+        """ Syncs teamleader invoices into target database
 
-        logger.info(f"Done, synchronized {total_synced} events")
+            Arguments:
+            modified_since -- Filters teamleader results with updated_since
+                              If None, it will retrieve all teamleader invoices.
+        """
+        self.resource_sync(
+            'invoices', self.tl_client.list_invoices, self.invoices, modified_since)
 
-    def companies_status(self):
-        return self.companies.status()
+    def projects_sync(self, modified_since: datetime = None):
+        """ Syncs teamleader projects into target database
 
-    def contacts_status(self):
-        return self.contacts.status()
+            Arguments:
+            modified_since -- Filters teamleader projects with updated_since
+                              If None, it will retrieve all teamleader projects.
+        """
+        self.resource_sync(
+            'projects', self.tl_client.list_projects, self.projects, modified_since)
+
+    def users_sync(self, modified_since: datetime = None):
+        """ Syncs teamleader users into target database
+
+            Arguments:
+            modified_since -- Filters teamleader users with updated_since
+                              If None, it will retrieve all teamleader users.
+        """
+        self.resource_sync('users', self.tl_client.list_users,
+                           self.users, modified_since)
 
     def teamleader_sync(self, full_sync=False):
         if full_sync:
@@ -165,20 +150,35 @@ class App:
         self.contacts_sync()
         self.departments_sync()
         self.events_sync()
-        # self.invoices_sync()
-        # self.projects_sync()
-        # self.users_sync()
+        self.invoices_sync()
+        self.projects_sync()
+        self.users_sync()
 
         logger.info("Teamleader sync completed")
+
+    def teamleader_status(self):
+        status = {}
+        status['companies'] = self.companies.status()
+        status['contacts'] = self.contacts.status()
+        status['departments'] = self.departments.status()
+        status['events'] = self.events.status()
+        status['invoices'] = self.invoices.status()
+        status['projects'] = self.projects.status()
+        status['users'] = self.users.status()
+
+        return status
 
     def main(self):
         try:
             argh.dispatch_commands([
-                self.companies_status,
-                self.contacts_status,
                 self.companies_sync,
-                self.contacts_sync,
-                self.teamleader_sync
+                self.departments_sync,
+                self.events_sync,
+                self.invoices_sync,
+                self.projects_sync,
+                self.users_sync,
+                self.teamleader_sync,
+                self.teamleader_status
             ])
         except (PSQLError) as e:
             logger.error(e)

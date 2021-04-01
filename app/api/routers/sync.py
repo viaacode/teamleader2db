@@ -31,14 +31,7 @@ def auth_callback(code: str, state: str = ''):
 
 @router.get("/teamleader")
 async def teamleader_sync_status():
-    status = {}
-    status['companies'] = worker.app.companies_status()
-    status['contacts'] = worker.app.contacts_status()
-    # status['departments'] = worker.app.contacts_status()
-    # status['events'] = worker.app.contacts_status()
-    # status['invoices'] = worker.app.contacts_status()
-    # status['projects'] = worker.app.contacts_status()
-    # status['users'] = worker.app.contacts_status()
+    status = worker.app.teamleader_status()
     status['job_running'] = worker.teamleader_running
 
     return status
