@@ -3,10 +3,12 @@
 
 import json
 from datetime import datetime
-# from app.comm.psql_wrapper import PostgresqlWrapper
 
 
 class BaseModel:
+    """ Implements common methods used by the models for syncing data into database.
+    currently following models use this: Companies, Contacts, Departments, Events,
+    Invoices, Projects, Users."""
 
     def __init(self, db_params: dict, table_names: dict):
         pass
@@ -63,9 +65,7 @@ class BaseModel:
     def count_tl_type(self, tl_type: str) -> int:
         return self.count_where('tl_type = %s', (tl_type,))
 
-    # customize these in the classes where we want different columns.
-    # right now actually the most elegant/dry is to re-use them in
-    # companies, contacts, invoices, etc.
+    # customize these below methods in the classes where we want different or additional columns.
 
     @classmethod
     def create_table_sql(cls, table_name):

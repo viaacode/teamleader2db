@@ -28,10 +28,11 @@ class App:
 
     def __init__(self):
         # Initialize teamleader and target database tables
-        self.tl_client = TeamleaderClient(config.app_cfg['teamleader'])
+        self.tlc = TeamleaderClient(config.app_cfg['teamleader'])
 
         db_conf = config.app_cfg['postgresql_teamleader']
         table_names = config.app_cfg['table_names']
+
         self.companies = Companies(db_conf, table_names)
         self.contacts = Contacts(db_conf, table_names)
         self.departments = Departments(db_conf, table_names)
@@ -41,7 +42,7 @@ class App:
         self.users = Users(db_conf, table_names)
 
     def auth_callback(self, code, state):
-        return self.tl_client.auth_code_callback(code, state)
+        return self.tlc.auth_code_callback(code, state)
 
     def resource_sync(self, name, tl_method, model, modified_since=None):
         # TODO: fix ts format now its 2021-04-01 16:30:07.884493+02:00
@@ -71,7 +72,7 @@ class App:
                               If None, it will retrieve all teamleader entries.
         """
         self.resource_sync(
-            'companies', self.tl_client.list_companies, self.companies, modified_since)
+            'companies', self.tlc.list_companies, self.companies, modified_since)
 
     def contacts_sync(self, modified_since: datetime = None):
         """ Syncs teamleader contacts into target database
@@ -81,7 +82,7 @@ class App:
                               If None, it will retrieve all teamleader entries.
         """
         self.resource_sync(
-            'contacts', self.tl_client.list_contacts, self.contacts, modified_since)
+            'contacts', self.tlc.list_contacts, self.contacts, modified_since)
 
     def departments_sync(self, modified_since: datetime = None):
         """ Syncs teamleader departments into target database
@@ -91,7 +92,7 @@ class App:
                               If None, it will retrieve all teamleader entries.
         """
         self.resource_sync(
-            'departments', self.tl_client.list_departments, self.departments, modified_since)
+            'departments', self.tlc.list_departments, self.departments, modified_since)
 
     def events_sync(self, modified_since: datetime = None):
         """ Syncs teamleader events into target database
@@ -100,7 +101,7 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-        self.resource_sync('events', self.tl_client.list_events,
+        self.resource_sync('events', self.tlc.list_events,
                            self.events, modified_since)
 
     def invoices_sync(self, modified_since: datetime = None):
@@ -111,7 +112,7 @@ class App:
                               If None, it will retrieve all teamleader invoices.
         """
         self.resource_sync(
-            'invoices', self.tl_client.list_invoices, self.invoices, modified_since)
+            'invoices', self.tlc.list_invoices, self.invoices, modified_since)
 
     def projects_sync(self, modified_since: datetime = None):
         """ Syncs teamleader projects into target database
@@ -121,7 +122,7 @@ class App:
                               If None, it will retrieve all teamleader projects.
         """
         self.resource_sync(
-            'projects', self.tl_client.list_projects, self.projects, modified_since)
+            'projects', self.tlc.list_projects, self.projects, modified_since)
 
     def users_sync(self, modified_since: datetime = None):
         """ Syncs teamleader users into target database
@@ -130,7 +131,7 @@ class App:
             modified_since -- Filters teamleader users with updated_since
                               If None, it will retrieve all teamleader users.
         """
-        self.resource_sync('users', self.tl_client.list_users,
+        self.resource_sync('users', self.tlc.list_users,
                            self.users, modified_since)
 
     def teamleader_sync(self, full_sync=False):
