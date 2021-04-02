@@ -117,9 +117,9 @@ class TeamleaderClient:
             params['page[size]'] = page_size
 
         if updated_since:
-            # 2021-04-01 16:30:07.884493+02:00 convert it to:
-            # ex: '2021-03-29T16:44:33+00:00'
-            params['filter[updated_since]'] = updated_since
+            # needs to be isormat without microsecond ex: '2021-03-29T16:44:33+00:00'
+            params['filter[updated_since]'] = updated_since.replace(
+                microsecond=0).isoformat()
 
         res = requests.get(path, params=params, headers=headers)
         if res.status_code == 401:
@@ -132,8 +132,13 @@ class TeamleaderClient:
         if res.status_code == 200:
             return res.json()['data']
         else:
-            print('call to {} failed with code {}'.format(
-                path, res.status_code), flush=True)
+            print('call to {} failed\n error code={}\n error response {}\n used params {}\n'.format(
+                path,
+                res.status_code,
+                res.text,
+                params
+            ),
+                flush=True)
             return []
 
     def list_companies(self, page=1, page_size=20, updated_since: datetime = None):

@@ -46,7 +46,8 @@ class App:
 
         modified_since = model.max_last_modified_timestamp()
         if modified_since:
-            logger.info(f"{name} sync since {modified_since} started...")
+            logger.info(
+                f"{name} sync since {modified_since.isoformat()} started...")
         else:
             logger.info(f"{name} full synchronization started...")
 
