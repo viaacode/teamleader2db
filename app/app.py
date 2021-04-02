@@ -24,7 +24,7 @@ class App:
 
     def __init__(self):
         # Initialize teamleader and target database tables
-        self.tlc = TeamleaderClient(config.app_cfg['teamleader'])
+        self.tlc = TeamleaderClient(config.app_cfg)
 
         db_conf = config.app_cfg['postgresql_teamleader']
         table_names = config.app_cfg['table_names']

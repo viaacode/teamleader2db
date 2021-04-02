@@ -4,6 +4,7 @@
 import requests
 import time
 from datetime import datetime
+from app.models.teamleader_auth import TeamleaderAuth
 
 # Avoid getting 429 Too Many Requests error
 RATE_LIMIT_SLEEP = 0.6
@@ -12,17 +13,29 @@ RATE_LIMIT_SLEEP = 0.6
 class TeamleaderClient:
     """Acts as a client to query relevant information from Teamleader API"""
 
-    def __init__(self, params: dict,):
+    def __init__(self, app_config: dict,):
+        params = app_config['teamleader']
+
         self.auth_uri = params['auth_uri']
         self.api_uri = params['api_uri']
         self.client_id = params['client_id']
         self.client_secret = params['client_secret']
         self.redirect_uri = params['redirect_uri']
-        # TODO: fetch code, auth_token, refresh_token from db, as this overrides the default
-        self.code = params['code']
-        self.token = params['auth_token']
-        self.refresh_token = params['refresh_token']
+
         self.secret_code_state = params['secret_code_state']
+
+        self.token_store = TeamleaderAuth(
+            app_config['postgresql_teamleader'],
+            app_config['table_names']
+        )
+
+        if(self.token_store.count() == 0):
+            self.code = params['code']
+            self.token = params['auth_token']
+            self.refresh_token = params['refresh_token']
+            self.token_store.save(self.code, self.token, self.refresh_token)
+        else:
+            self.code, self.token, self.refresh_token = self.token_store.read()
 
     def authcode_request_link(self):
         """ First request that results in a callback to redirect_uri that supplies a code
@@ -63,10 +76,7 @@ class TeamleaderClient:
             response = token_response.json()
             self.token = response['access_token']  # expires in 1 hour
             self.refresh_token = response['refresh_token']
-
-            # TODO: store new tokens in database table auth_table!!!
-            print("auth_token:", self.token, flush=True)
-            print("\nrefresh_token:", self.refresh_token, flush=True)
+            self.token_store.save(self.code, self.token, self.refresh_token)
         else:
             print(
                 f"Error {token_response.status_code}: {token_response.text} in handle_token_response",
