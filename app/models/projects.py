@@ -4,10 +4,10 @@
 import uuid
 from datetime import datetime
 from app.comm.psql_wrapper import PostgresqlWrapper
-from app.comm.base_model import BaseModel
+from app.models.sync_model import SyncModel
 
 
-class Projects(BaseModel):
+class Projects(SyncModel):
     """Acts as a client to query and modify information from and to DEEWEE"""
 
     def __init__(self, db_params: dict, table_names: dict):

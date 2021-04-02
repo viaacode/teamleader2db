@@ -6,13 +6,13 @@ from psycopg2 import OperationalError as PSQLError
 from viaa.configuration import ConfigParser
 from viaa.observability import logging
 from app.comm.teamleader_client import TeamleaderClient
-from app.comm.companies import Companies
-from app.comm.contacts import Contacts
-from app.comm.departments import Departments
-from app.comm.events import Events
-from app.comm.invoices import Invoices
-from app.comm.projects import Projects
-from app.comm.users import Users
+from app.models.companies import Companies
+from app.models.contacts import Contacts
+from app.models.departments import Departments
+from app.models.events import Events
+from app.models.invoices import Invoices
+from app.models.projects import Projects
+from app.models.users import Users
 
 
 # Initialize the logger and the configuration

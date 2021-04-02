@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 
-class BaseModel:
+class SyncModel:
     """ Implements common methods used by the models for syncing data into database.
     currently following models use this: Companies, Contacts, Departments, Events,
     Invoices, Projects, Users."""
