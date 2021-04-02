@@ -71,8 +71,8 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-        self.resource_sync(
-            'companies', self.tlc.list_companies, self.companies, modified_since)
+        self.resource_sync('companies', self.tlc.list_companies,
+                           self.companies, modified_since)
 
     def contacts_sync(self, modified_since: datetime = None):
         """ Syncs teamleader contacts into target database
@@ -81,8 +81,8 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-        self.resource_sync(
-            'contacts', self.tlc.list_contacts, self.contacts, modified_since)
+        self.resource_sync('contacts', self.tlc.list_contacts,
+                           self.contacts, modified_since)
 
     def departments_sync(self, modified_since: datetime = None):
         """ Syncs teamleader departments into target database
@@ -91,8 +91,8 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader entries.
         """
-        self.resource_sync(
-            'departments', self.tlc.list_departments, self.departments, modified_since)
+        self.resource_sync('departments', self.tlc.list_departments,
+                           self.departments, modified_since)
 
     def events_sync(self, modified_since: datetime = None):
         """ Syncs teamleader events into target database
@@ -111,8 +111,8 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader invoices.
         """
-        self.resource_sync(
-            'invoices', self.tlc.list_invoices, self.invoices, modified_since)
+        self.resource_sync('invoices', self.tlc.list_invoices,
+                           self.invoices, modified_since)
 
     def projects_sync(self, modified_since: datetime = None):
         """ Syncs teamleader projects into target database
@@ -121,8 +121,8 @@ class App:
             modified_since -- Filters teamleader projects with updated_since
                               If None, it will retrieve all teamleader projects.
         """
-        self.resource_sync(
-            'projects', self.tlc.list_projects, self.projects, modified_since)
+        self.resource_sync('projects', self.tlc.list_projects,
+                           self.projects, modified_since)
 
     def users_sync(self, modified_since: datetime = None):
         """ Syncs teamleader users into target database
