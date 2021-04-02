@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
+import argh
 from psycopg2 import OperationalError as PSQLError
-
 from viaa.configuration import ConfigParser
 from viaa.observability import logging
-
 from app.comm.teamleader_client import TeamleaderClient
 from app.comm.companies import Companies
 from app.comm.contacts import Contacts
@@ -16,8 +14,6 @@ from app.comm.invoices import Invoices
 from app.comm.projects import Projects
 from app.comm.users import Users
 
-
-import argh
 
 # Initialize the logger and the configuration
 config = ConfigParser()
@@ -44,13 +40,16 @@ class App:
     def auth_callback(self, code, state):
         return self.tlc.auth_code_callback(code, state)
 
-    def resource_sync(self, name, tl_method, model, modified_since=None):
-        # TODO: fix ts format now its 2021-04-01 16:30:07.884493+02:00
-        # but see teamleader client, it should be other format...
-        # if not modified_since:
-        #     modified_since = model.max_last_modified_timestamp()
+    def resource_sync(self, name, tl_method, model, full_sync=False):
+        if full_sync:
+            model.truncate_table()
 
-        logger.info(f"{name} sync since {modified_since} started...")
+        modified_since = model.max_last_modified_timestamp()
+        if modified_since:
+            logger.info(f"{name} sync since {modified_since} started...")
+        else:
+            logger.info(f"{name} full synchronization started...")
+
         page = 1
         resp = [1]
         total_synced = 0
@@ -60,11 +59,11 @@ class App:
                 model.upsert_results([(resp, name)])
                 page += 1
                 total_synced += len(resp)
-                print(f"{name} synced = {len(resp)}", flush=True)
+                print(f"{name} synced {len(resp)} entries", flush=True)
 
         logger.info(f"Done, synchronized {total_synced} {name}")
 
-    def companies_sync(self, modified_since: datetime = None):
+    def companies_sync(self, full_sync=False):
         """ Syncs teamleader companies into target database
 
             Arguments:
@@ -72,9 +71,9 @@ class App:
                               If None, it will retrieve all teamleader entries.
         """
         self.resource_sync('companies', self.tlc.list_companies,
-                           self.companies, modified_since)
+                           self.companies, full_sync)
 
-    def contacts_sync(self, modified_since: datetime = None):
+    def contacts_sync(self, full_sync=False):
         """ Syncs teamleader contacts into target database
 
             Arguments:
@@ -82,9 +81,9 @@ class App:
                               If None, it will retrieve all teamleader entries.
         """
         self.resource_sync('contacts', self.tlc.list_contacts,
-                           self.contacts, modified_since)
+                           self.contacts, full_sync)
 
-    def departments_sync(self, modified_since: datetime = None):
+    def departments_sync(self, full_sync=False):
         """ Syncs teamleader departments into target database
 
             Arguments:
@@ -92,9 +91,9 @@ class App:
                               If None, it will retrieve all teamleader entries.
         """
         self.resource_sync('departments', self.tlc.list_departments,
-                           self.departments, modified_since)
+                           self.departments, full_sync)
 
-    def events_sync(self, modified_since: datetime = None):
+    def events_sync(self, full_sync=False):
         """ Syncs teamleader events into target database
 
             Arguments:
@@ -102,9 +101,9 @@ class App:
                               If None, it will retrieve all teamleader entries.
         """
         self.resource_sync('events', self.tlc.list_events,
-                           self.events, modified_since)
+                           self.events, full_sync)
 
-    def invoices_sync(self, modified_since: datetime = None):
+    def invoices_sync(self, full_sync=False):
         """ Syncs teamleader invoices into target database
 
             Arguments:
@@ -112,9 +111,9 @@ class App:
                               If None, it will retrieve all teamleader invoices.
         """
         self.resource_sync('invoices', self.tlc.list_invoices,
-                           self.invoices, modified_since)
+                           self.invoices, full_sync)
 
-    def projects_sync(self, modified_since: datetime = None):
+    def projects_sync(self, full_sync=False):
         """ Syncs teamleader projects into target database
 
             Arguments:
@@ -122,9 +121,9 @@ class App:
                               If None, it will retrieve all teamleader projects.
         """
         self.resource_sync('projects', self.tlc.list_projects,
-                           self.projects, modified_since)
+                           self.projects, full_sync)
 
-    def users_sync(self, modified_since: datetime = None):
+    def users_sync(self, full_sync=False):
         """ Syncs teamleader users into target database
 
             Arguments:
@@ -132,28 +131,21 @@ class App:
                               If None, it will retrieve all teamleader users.
         """
         self.resource_sync('users', self.tlc.list_users,
-                           self.users, modified_since)
+                           self.users, full_sync)
 
     def teamleader_sync(self, full_sync=False):
         if full_sync:
             logger.info("Start full sync from teamleader")
-            self.companies.truncate_table()
-            self.contacts.truncate_table()
-            self.departments.truncate_table()
-            self.events.truncate_table()
-            self.invoices.truncate_table()
-            self.projects.truncate_table()
-            self.users.truncate_table()
         else:
             logger.info("Start delta sync from teamleader")
 
-        self.companies_sync()
-        self.contacts_sync()
-        self.departments_sync()
-        self.events_sync()
-        self.invoices_sync()
-        self.projects_sync()
-        self.users_sync()
+        self.companies_sync(full_sync)
+        self.contacts_sync(full_sync)
+        self.departments_sync(full_sync)
+        self.events_sync(full_sync)
+        self.invoices_sync(full_sync)
+        self.projects_sync(full_sync)
+        self.users_sync(full_sync)
 
         logger.info("Teamleader sync completed")
 

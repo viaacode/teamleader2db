@@ -3,6 +3,7 @@
 
 import requests
 import time
+from datetime import datetime
 
 # Avoid getting 429 Too Many Requests error
 RATE_LIMIT_SLEEP = 0.6
@@ -105,7 +106,7 @@ class TeamleaderClient:
         time.sleep(RATE_LIMIT_SLEEP)
         self.handle_token_response(r)
 
-    def request_page(self, resource_path, page=None, page_size=None, updated_since=None):
+    def request_page(self, resource_path, page=None, page_size=None, updated_since: datetime = None):
         path = self.api_uri + resource_path
         headers = {'Authorization': "Bearer {}".format(self.token)}
         params = {}
@@ -116,6 +117,7 @@ class TeamleaderClient:
             params['page[size]'] = page_size
 
         if updated_since:
+            # 2021-04-01 16:30:07.884493+02:00 convert it to:
             # ex: '2021-03-29T16:44:33+00:00'
             params['filter[updated_since]'] = updated_since
 
@@ -134,33 +136,30 @@ class TeamleaderClient:
                 path, res.status_code), flush=True)
             return []
 
-    def list_companies(self, page=1, page_size=20, updated_since=None):
+    def list_companies(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/companies.list', page, page_size, updated_since)
 
-    def list_contacts(self, page=1, page_size=20, updated_since=None):
+    def list_contacts(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/contacts.list', page, page_size, updated_since)
 
-    def list_departments(self, page=1, page_size=20, updated_since=None):
-        # departments has no pagination! we want a similar interface however,
-        # so if page==2 we return []. otherwise our sync goes into infinite loop
-        # as the page param is ignored here and we always get back 3 of the same deps.
-        print(
-            f"list_departments: page={page} size={page_size} updated_since={updated_since}")
+    def list_departments(self, page=1, page_size=20, updated_since: datetime = None):
         if page > 1:
+            # Departments has no pagination. We want a similar interface however.
+            # So if page > 1 we return []. Otherwise our sync goes into an infinite loop.
             return []
         else:
             return self.request_page('/departments.list', page, page_size, updated_since)
 
-    def list_events(self, page=1, page_size=20, updated_since=None):
+    def list_events(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/events.list', page, page_size, updated_since)
 
-    def list_invoices(self, page=1, page_size=20, updated_since=None):
+    def list_invoices(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/invoices.list', page, page_size, updated_since)
 
-    def list_projects(self, page=1, page_size=20, updated_since=None):
+    def list_projects(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/projects.list', page, page_size, updated_since)
 
-    def list_users(self, page=1, page_size=20, updated_since=None):
+    def list_users(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/users.list', page, page_size, updated_since)
 
     def current_user(self):
