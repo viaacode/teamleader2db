@@ -3,12 +3,8 @@
 
 import requests
 import time
-# from datetime import datetime, timezone
-# json
 
-# WARNING: watch out for rate limit of 100 calls per minute !
-# it will give HTTP 429 Too Many Requests error
-# to avoid hitting the rate limit for now:
+# Avoid getting 429 Too Many Requests error
 RATE_LIMIT_SLEEP = 0.6
 
 
@@ -29,24 +25,10 @@ class TeamleaderClient:
 
     def authcode_request_link(self):
         """ First request that results in a callback to redirect_uri that supplies a code
-        for auth_token_request """
-
-        # returns link to be opened in browser (that is also logged in into teamleader)
-        # this then shows a page to allow/deny access and that makes a callback to
-        # authcode_callback
-
-        # we can't further automate/send it from here as the backend is not logged in
-        # teamleader and has no session + we can't click on the 'accept' button on the
-        # webpage. well we could do it with something like chrome selenium but that is
-        # out of scope here.
-        # auth_params = {
-        #     'client_id': self.client_id,
-        #     'response_type': 'code',
-        #     'redirect_uri': self.redirect_uri,
-        #     'state': self.secret_code_state
-        # }
-        # auth_result = requests.get(auth_uri, params=auth_params)
-
+        for auth_token_request. We return a link to be opened in browser while the user
+        is logged into teamleader. The user then needs to click 'Geef toegang' and this triggers
+        a request to the 'redirect_uri' that is handled by our authcode_callback method.
+        """
         auth_uri = self.auth_uri + '/oauth2/authorize'
         link = "{}?client_id={}&response_type=code&redirect_uri={}&state={}".format(
             auth_uri,
@@ -57,12 +39,12 @@ class TeamleaderClient:
 
         return link
 
-    # after user follows the authcode_request_link from above. we handle
-    # the callback here, and update our tokens.
-    # called with api route: /sync/oauth?code='supplied_by_teamleader'&state='self.secret_code_state'
-
     def authcode_callback(self, code, state):
-        print(f"received callback: code={code} state={state}", flush=True)
+        """
+        After user follows the authcode_request_link from above. we handle
+        the callback here, and update our tokens.
+        called with api route: /sync/oauth?code='supplied_by_teamleader'&state='self.secret_code_state'
+        """
         if state != self.secret_code_state:
             return "code rejected"
 
@@ -90,7 +72,7 @@ class TeamleaderClient:
                 flush=True
             )
             print(
-                f"Login into teamleader and paste link in browser: {self.authcode_request_link()}",
+                f"Login into teamleader and paste code callback link in browser: {self.authcode_request_link()}",
                 flush=True
             )
 
