@@ -147,7 +147,12 @@ class TeamleaderClient:
     def list_contacts(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/contacts.list', page, page_size, updated_since)
 
+    def list_invoices(self, page=1, page_size=20, updated_since: datetime = None):
+        return self.request_page('/invoices.list', page, page_size, updated_since)
+
     def list_departments(self, page=1, page_size=20, updated_since: datetime = None):
+        # departments.list has no pagination and no updated_since support
+        # however its only 3 entries and full sync is always used
         if page > 1:
             # Departments has no pagination. We want a similar interface however.
             # So if page > 1 we return []. Otherwise our sync goes into an infinite loop.
@@ -156,15 +161,15 @@ class TeamleaderClient:
             return self.request_page('/departments.list', page, page_size, updated_since)
 
     def list_events(self, page=1, page_size=20, updated_since: datetime = None):
+        # events.list has no updated_since support, always full sync here
         return self.request_page('/events.list', page, page_size, updated_since)
 
-    def list_invoices(self, page=1, page_size=20, updated_since: datetime = None):
-        return self.request_page('/invoices.list', page, page_size, updated_since)
-
     def list_projects(self, page=1, page_size=20, updated_since: datetime = None):
+        # projects.list has no updated_since support, always full sync here
         return self.request_page('/projects.list', page, page_size, updated_since)
 
     def list_users(self, page=1, page_size=20, updated_since: datetime = None):
+        # users.list has no updated_since support, always full sync here
         return self.request_page('/users.list', page, page_size, updated_since)
 
     def current_user(self):
