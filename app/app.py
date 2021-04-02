@@ -38,7 +38,7 @@ class App:
         self.users = Users(db_conf, table_names)
 
     def auth_callback(self, code, state):
-        return self.tlc.auth_code_callback(code, state)
+        return self.tlc.authcode_callback(code, state)
 
     def resource_sync(self, name, tl_method, model, full_sync=False):
         if full_sync:

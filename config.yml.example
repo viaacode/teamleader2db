@@ -20,12 +20,12 @@ app:
     port: 5432
     sslmode: 'disable'
   table_names:
-    oauth_table: 'tl_oauth'
-    companies_table: 'tl_companies'
-    contacts_table: 'tl_contacts'
-    departments_table: 'tl_departments'
-    events_table: 'tl_events'
-    invoices_table: 'tl_invoices'
-    projects_table: 'tl_projects'
-    users_table: 'tl_users'
+    oauth_table: 'public.tl_authorization'
+    companies_table: 'public.tl_companies'
+    contacts_table: 'public.tl_contacts'
+    departments_table: 'public.tl_departments'
+    events_table: 'public.tl_events'
+    invoices_table: 'public.tl_invoices'
+    projects_table: 'public.tl_projects'
+    users_table: 'public.tl_users'
 
