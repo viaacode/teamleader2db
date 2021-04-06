@@ -20,10 +20,10 @@ class TestApp:
 
     @patch.object(App, 'teamleader_sync', return_value=None)
     def test_main_full(
-            self,
-            sync_mock,
-            teamleader_client_mock,
-            companies_mock, contacts_mock, departments_mock
+        self,
+        sync_mock,
+        departments_mock, contacts_mock, companies_mock, 
+        teamleader_client_mock 
     ):
         # Mock max_last_modified_timestamp to return None
         # companies_mock().max_last_modified_timestamp.return_value = None
@@ -34,24 +34,23 @@ class TestApp:
         call_arg = sync_mock.call_args[1]
         assert call_arg['full_sync'] is True
 
-    @patch.object(App, 'deewee_sync', return_value=None)
+    @patch.object(App, 'teamleader_sync', return_value=None)
     def test_main_diff(
-            self,
-            sync_mock,
-            deewee_client_mock,
-            ldap_client_mock,
-            avo_client_mock):
+        self,
+        sync_mock,
+        departments_mock, contacts_mock, companies_mock, 
+        teamleader_client_mock 
+    ):
         # Mock max_last_modified_timestamp to return "now"
-        deewee_client_mock().max_last_modified_timestamp.return_value = datetime.now()
+        companies_mock().max_last_modified_timestamp.return_value = datetime.now()
 
         app = App()
-        app.deewee_sync_job()
+        app.teamleader_sync(full_sync=False)
 
         assert sync_mock.call_count == 1
-        assert deewee_client_mock().max_last_modified_timestamp.call_count == 1
-
-        call_arg = sync_mock.call_args[0][0]
-        assert isinstance(call_arg, datetime)
+        # assert companies_mock().max_last_modified_timestamp.call_count == 1
+        call_arg = sync_mock.call_args[1]
+        assert call_arg['full_sync'] is False
 
     # def test_sync_deewee(
     #        self,
@@ -72,26 +71,33 @@ class TestApp:
     #        (['person1'], 'people')]
 
     def test_argh_command_line_help(
-            self,
-            deewee_client_mock,
-            ldap_client_mock,
-            avo_client_mock):
+        self,
+        departments_mock, contacts_mock, companies_mock, 
+        teamleader_client_mock 
+    ):
 
         app = App()
         with pytest.raises(SystemExit):
             app.main()
 
-    def test_main_psql_error(self, deewee_client_mock,
-                             ldap_client_mock, avo_client_mock):
-        deewee_client_mock().max_last_modified_timestamp.side_effect = PSQLError
+    def test_main_psql_error(
+        self,
+        departments_mock, contacts_mock, companies_mock, 
+        teamleader_client_mock
+    ):
+        companies_mock().max_last_modified_timestamp.side_effect = PSQLError
         app = App()
         with pytest.raises(PSQLError):
             app.teamleader_sync()
 
-    @patch.object(App, 'deewee_sync', side_effect=SystemError)
-    def test_main_ldap_error(self, sync_mock, deewee_client_mock,
-                             ldap_client_mock, avo_client_mock):
-        deewee_client_mock().max_last_modified_timestamp.return_value = None
+    @patch.object(App, 'teamleader_sync', side_effect=SystemError)
+    def test_main_error(
+        self,
+        sync_mock,
+        departments_mock, contacts_mock, companies_mock, 
+        teamleader_client_mock
+    ):
+        contacts_mock().max_last_modified_timestamp.return_value = None
         app = App()
         with pytest.raises(SystemError):
             app.teamleader_sync()
