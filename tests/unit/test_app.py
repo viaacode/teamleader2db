@@ -26,19 +26,13 @@ class TestApp:
             companies_mock, contacts_mock, departments_mock
     ):
         # Mock max_last_modified_timestamp to return None
-        companies_mock().max_last_modified_timestamp.return_value = None
-        contacts_mock().max_last_modified_timestamp.return_value = None
-        departments_mock().max_last_modified_timestamp.return_value = None
+        # companies_mock().max_last_modified_timestamp.return_value = None
         app = App()
-        app.teamleader_sync()
+        app.teamleader_sync(full_sync=True)
 
         assert sync_mock.call_count == 1
-        assert companies_mock().max_last_modified_timestamp.call_count == 1
-        assert contacts_mock().max_last_modified_timestamp.call_count == 1
-        assert departments_mock().max_last_modified_timestamp.call_count == 1
-
-        call_arg = sync_mock.call_args[0][0]
-        assert call_arg is None
+        call_arg = sync_mock.call_args[1]
+        assert call_arg['full_sync'] is True
 
     @patch.object(App, 'deewee_sync', return_value=None)
     def test_main_diff(
