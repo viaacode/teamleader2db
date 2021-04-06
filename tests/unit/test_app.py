@@ -22,8 +22,8 @@ class TestApp:
     def test_main_full(
         self,
         sync_mock,
-        departments_mock, contacts_mock, companies_mock, 
-        teamleader_client_mock 
+        departments_mock, contacts_mock, companies_mock,
+        teamleader_client_mock
     ):
         # Mock max_last_modified_timestamp to return None
         # companies_mock().max_last_modified_timestamp.return_value = None
@@ -38,8 +38,8 @@ class TestApp:
     def test_main_diff(
         self,
         sync_mock,
-        departments_mock, contacts_mock, companies_mock, 
-        teamleader_client_mock 
+        departments_mock, contacts_mock, companies_mock,
+        teamleader_client_mock
     ):
         # Mock max_last_modified_timestamp to return "now"
         companies_mock().max_last_modified_timestamp.return_value = datetime.now()
@@ -72,8 +72,8 @@ class TestApp:
 
     def test_argh_command_line_help(
         self,
-        departments_mock, contacts_mock, companies_mock, 
-        teamleader_client_mock 
+        departments_mock, contacts_mock, companies_mock,
+        teamleader_client_mock
     ):
 
         app = App()
@@ -82,7 +82,7 @@ class TestApp:
 
     def test_main_psql_error(
         self,
-        departments_mock, contacts_mock, companies_mock, 
+        departments_mock, contacts_mock, companies_mock,
         teamleader_client_mock
     ):
         companies_mock().max_last_modified_timestamp.side_effect = PSQLError
@@ -94,7 +94,7 @@ class TestApp:
     def test_main_error(
         self,
         sync_mock,
-        departments_mock, contacts_mock, companies_mock, 
+        departments_mock, contacts_mock, companies_mock,
         teamleader_client_mock
     ):
         contacts_mock().max_last_modified_timestamp.return_value = None
