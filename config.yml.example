@@ -3,29 +3,29 @@ viaa:
     level: DEBUG
 app:
   teamleader:
-    auth_uri: 'https://app.teamleader.eu'
-    api_uri: 'https://api.teamleader.eu'
-    client_id: 'client id here'
-    client_secret: 'client secret here'
-    redirect_uri: 'https://public_openshift_route/sync/oauth'
-    secret_code_state: 'code_to_validate_callback'
-    code: 'code obtained with callback'
-    auth_token: 'current auth token which expires after 1 hour'
-    refresh_token: 'current refresh token, expires after using it to refetch new auth token and refresh token'
+    auth_uri: !ENV ${TEAMLEADER_AUTH_URI}
+    api_uri: !ENV ${TEAMLEADER_API_URI}
+    client_id: !ENV ${TEAMLEADER_CLIENT_ID}
+    client_secret: !ENV ${TEAMLEADER_CLIENT_SECRET}
+    redirect_uri: !ENV ${TEAMLEADER_REDIRECT_URI}
+    secret_code_state: !ENV ${TEAMLEADER_SECRET_CODE_STATE}
+    code: !ENV ${TEAMLEADER_CODE}
+    auth_token: !ENV ${TEAMLEADER_AUTH_TOKEN}
+    refresh_token: !ENV ${TEAMLEADER_REFRESH_TOKEN}
   postgresql_teamleader:
-    database: "database_for_teamleader_data"
-    host: "127.0.0.1"
-    password: "postgres"
-    user: "postgres"
-    port: 5432
-    sslmode: 'disable'
+    database: !ENV ${POSTGRESQL_DATABASE}
+    host: !ENV ${POSTGRESQL_HOST}
+    port: !ENV ${POSTGRESQL_PORT}
+    password: !ENV ${POSTGRESQL_PASSWORD}
+    user: !ENV ${POSTGRESQL_USER}
+    sslmode: !ENV ${POSTGRESQL_SSLMODE}
   table_names:
-    oauth_table: 'public.tl_authorization'
-    companies_table: 'public.tl_companies'
-    contacts_table: 'public.tl_contacts'
-    departments_table: 'public.tl_departments'
-    events_table: 'public.tl_events'
-    invoices_table: 'public.tl_invoices'
-    projects_table: 'public.tl_projects'
-    users_table: 'public.tl_users'
+    oauth_table: !ENV ${OAUTH_TABLE}
+    companies_table: !ENV ${COMPANIES_TABLE}
+    contacts_table: !ENV ${CONTACTS_TABLE}
+    departments_table: !ENV ${DEPARTMENTS_TABLE}
+    events_table: !ENV ${EVENTS_TABLE}
+    invoices_table: !ENV ${INVOICES_TABLE}
+    projects_table: !ENV ${PROJECTS_TABLE}
+    users_table: !ENV ${USERS_TABLE}
 
