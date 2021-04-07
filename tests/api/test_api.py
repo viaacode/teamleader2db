@@ -8,10 +8,15 @@ from fastapi.testclient import TestClient
 
 class TestApi:
     @pytest.fixture
+    @patch('app.app.Projects')
+    @patch('app.app.Invoices')
+    @patch('app.app.Events')
+    @patch('app.app.Departments')
     @patch('app.app.Companies')
     @patch('app.app.Contacts')
+    @patch('app.comm.teamleader_client.TeamleaderAuth')
     @patch("app.app.TeamleaderClient")
-    def client(self, mock_companies, mock_contacts, mock_tl):
+    def client(self, *args):
         from app.server import app
         return TestClient(app)
 
