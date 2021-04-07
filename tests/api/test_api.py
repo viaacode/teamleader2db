@@ -17,7 +17,7 @@ class TestApi:
     @patch('app.app.Contacts')
     @patch('app.comm.teamleader_client.TeamleaderAuth')
     @patch("app.app.TeamleaderClient")
-    def client(self, *args):
+    def client(self, *mocks):
         from app.server import app
         return TestClient(app)
 
