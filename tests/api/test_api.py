@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 class TestApi:
     @pytest.fixture
+    @patch('app.app.Users')
     @patch('app.app.Projects')
     @patch('app.app.Invoices')
     @patch('app.app.Events')
