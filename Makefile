@@ -71,6 +71,10 @@ sync:
 	. python_env/bin/activate; \
 	python -m app.app teamleader-sync
 
+.PHONY: code_callback_example
+code_callback_example:
+	curl "http://localhost:8080/sync/oauth?code=CODE_HERE&state=qas_secret_state"
+
 
 .PHONY: server
 server:
