@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pytest
+# import pytest
 from unittest.mock import patch
-from datetime import datetime
-from psycopg2 import OperationalError as PSQLError
+# from datetime import datetime
+# from psycopg2 import OperationalError as PSQLError
 from app.app import App
 
 
@@ -43,7 +43,7 @@ class TestApp:
         *models_mock
     ):
         # Mock max_last_modified_timestamp to return "now"
-        #companies_mock().max_last_modified_timestamp.return_value = datetime.now()
+        # companies_mock().max_last_modified_timestamp.return_value = datetime.now()
 
         app = App()
         app.teamleader_sync(full_sync=False)
@@ -71,7 +71,7 @@ class TestApp:
     ):
         # companies_mock().max_last_modified_timestamp.side_effect = PSQLError
         app = App()
-        #with pytest.raises(PSQLError):
+        # with pytest.raises(PSQLError):
         app.teamleader_sync()
 
     # @patch.object(App, 'teamleader_sync', side_effect=SystemError)
@@ -82,7 +82,7 @@ class TestApp:
         teamleader_client_mock,
         *models_mock
     ):
-        #contacts_mock().max_last_modified_timestamp.return_value = None
+        # contacts_mock().max_last_modified_timestamp.return_value = None
         app = App()
         # with pytest.raises(SystemError):
         app.teamleader_sync()

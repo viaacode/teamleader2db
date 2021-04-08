@@ -151,14 +151,49 @@ class TeamleaderClient:
                 flush=True)
             return []
 
+    def request_item(self, resource_path, resource_id):
+        path = self.api_uri + resource_path
+        headers = {'Authorization': "Bearer {}".format(self.token)}
+        params = {}
+        params['id'] = resource_id
+
+        res = requests.get(path, params=params, headers=headers)
+        if res.status_code == 401:
+            self.auth_token_refresh()
+            headers = {'Authorization': "Bearer {}".format(self.token)}
+            res = requests.get(path, params=params, headers=headers)
+
+        time.sleep(RATE_LIMIT_SLEEP)
+
+        if res.status_code == 200:
+            return res.json()['data']
+        else:
+            print('call to {} failed\n error code={}\n error response {}\n used params {}\n'.format(
+                path,
+                res.status_code,
+                res.text,
+                params
+            ),
+                flush=True)
+            return []
+
     def list_companies(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/companies.list', page, page_size, updated_since)
+
+    def get_company(self, uid):
+        return self.request_item('/companies.info', uid)
 
     def list_contacts(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/contacts.list', page, page_size, updated_since)
 
+    def get_contact(self, uid):
+        return self.request_item('/contacts.info', uid)
+
     def list_invoices(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/invoices.list', page, page_size, updated_since)
+
+    def get_invoice(self, uid):
+        return self.request_item('/invoices.info', uid)
 
     def list_departments(self, page=1, page_size=20, updated_since: datetime = None):
         # departments.list has no pagination and no updated_since support
@@ -170,17 +205,35 @@ class TeamleaderClient:
         else:
             return self.request_page('/departments.list', page, page_size, updated_since)
 
+    def get_department(self, uid):
+        return self.request_item('/departments.info', uid)
+
     def list_events(self, page=1, page_size=20, updated_since: datetime = None):
         # events.list has no updated_since support, always full sync here
         return self.request_page('/events.list', page, page_size, updated_since)
+
+    def get_event(self, uid):
+        return self.request_item('/events.info', uid)
 
     def list_projects(self, page=1, page_size=20, updated_since: datetime = None):
         # projects.list has no updated_since support, always full sync here
         return self.request_page('/projects.list', page, page_size, updated_since)
 
+    def get_project(self, uid):
+        return self.request_item('/projects.info', uid)
+
     def list_users(self, page=1, page_size=20, updated_since: datetime = None):
         # users.list has no updated_since support, always full sync here
         return self.request_page('/users.list', page, page_size, updated_since)
 
+    def get_user(self, uid):
+        return self.request_item('/users.info', uid)
+
     def current_user(self):
         return self.request_page('/users.me')
+
+    def list_custom_fields(self, page=1, page_size=20):
+        return self.request_page('/customFieldDefinitions.list', page, page_size)
+
+    def get_custom_field(self, uid):
+        return self.request_item('/customFieldDefinitions.info', uid)
