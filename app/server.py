@@ -11,7 +11,7 @@ from app.api.api import api_router
 app = FastAPI(
     title="Teamleader2Db",
     description="API to synchronize Teamleader data to postgres database",
-    version="1.0.0",
+    version="1.0.1",
 )
 
 app.include_router(api_router)
