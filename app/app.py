@@ -23,9 +23,13 @@ logger = logging.get_logger(__name__, config=config)
 class App:
 
     def __init__(self):
-        # Initialize teamleader and target database tables
+        self.init_teamleader_client()
+        self.init_database_models()
+
+    def init_teamleader_client(self):
         self.tlc = TeamleaderClient(config.app_cfg)
 
+    def init_database_models(self):
         db_conf = config.app_cfg['postgresql_teamleader']
         table_names = config.app_cfg['table_names']
 

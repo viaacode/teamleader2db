@@ -132,6 +132,7 @@ class TeamleaderClient:
                 microsecond=0).isoformat()
 
         res = requests.get(path, params=params, headers=headers)
+
         if res.status_code == 401:
             self.auth_token_refresh()
             headers = {'Authorization': "Bearer {}".format(self.token)}
