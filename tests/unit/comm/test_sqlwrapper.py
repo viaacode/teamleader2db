@@ -4,8 +4,6 @@
 import pytest
 import uuid
 from unittest.mock import patch
-# from dataclasses import dataclass, field
-# from datetime import datetime
 from viaa.configuration import ConfigParser
 from app.models.contacts import Contacts
 from app.comm.psql_wrapper import PostgresqlWrapper
