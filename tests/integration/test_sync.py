@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 from app.app import App
 
 
-# pytestmark = [pytest.mark.vcr(ignore_localhost=True)]
-# @pytest.fixture(scope="module")
-# def vcr_config():
-#     # important to add the filter_headers here to avoid exposing credentials
-#     # in tests/cassettes!
-#     return {
-#         "record_mode": "once",
-#         "filter_headers": ["authorization"]
-#     }
-# @pytest.mark.vcr
+class MockResponse:
+    def __init__(self, code, data):
+        self.status_code = code
+        self.data = data
+
+    def json(self):
+        return self.data
+
 
 @patch('app.app.Users')
 @patch('app.app.Projects')
@@ -27,119 +25,86 @@ from app.app import App
 @patch('app.comm.teamleader_client.requests')
 class TestSync:
 
+    def mock_api_calls(self, *args, **kwargs):
+        url = args[0]
+        if '.list' in url:
+            assert args[0] == f'api_uri/{self.resource_name}.list'
+            page = kwargs['params']['page[number]']
+            if page > 1:  # only mock a single page of data
+                response = MockResponse(200, {'data': []})
+            else:
+                response = MockResponse(200, {'data': [{'id': 'uuid1'}]})
+        elif '.info' in url:
+            assert args[0] == f'api_uri/{self.resource_name}.info'
+            response = MockResponse(
+                200, {'data': {'id': 'uuid1', 'data': 'company data here'}})
+        else:
+            print(f"\n args={args} kwargs={kwargs}", flush=True)
+
+        return response
+
     def test_contacts_sync(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
 
-        # mock requests.get so that contacts call returns something we want
-        contacts = {'data': [
-            # {'id':1},
-            # {'id':2},
-            # {'id':3}
-        ]}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = contacts
+        self.resource_name = 'contacts'
+        mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.contacts_sync(full_sync=True)
-
-        assert mresp.json.call_count == 1
-
-        # assert mock_get_contacts.call_count == 1
-        # call_arg = mock_contacts.call_args[1]
-        #  __import__('pdb').set_trace()
-        # assert call_arg['full_sync'] is True
 
     def test_companies_sync(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
 
-        # mock requests.get so that api call returns something we want
-        comp_data = {'data': []}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = comp_data
+        self.resource_name = 'companies'
+        mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.companies_sync(full_sync=True)
-
-        assert mresp.json.call_count == 1
 
     def test_invoices_sync(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
 
-        # mock requests.get so that api call returns something we want
-        inv_data = {'data': []}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = inv_data
+        self.resource_name = 'invoices'
+        mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.invoices_sync(full_sync=True)
-
-        assert mresp.json.call_count == 1
 
     def test_departments_sync(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
 
-        # mock requests.get so that api call returns something we want
-        dep_data = {'data': []}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = dep_data
+        self.resource_name = 'departments'
+        mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.departments_sync(full_sync=True)
-
-        assert mresp.json.call_count == 1
 
     def test_events_sync(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
 
-        # mock requests.get so that api call returns something we want
-        ev_data = {'data': []}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = ev_data
+        self.resource_name = 'events'
+        mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.events_sync(full_sync=True)
-
-        assert mresp.json.call_count == 1
 
     def test_projects_sync(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
 
-        # mock requests.get so that api call returns something we want
-        pr_data = {'data': []}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = pr_data
+        self.resource_name = 'projects'
+        mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.projects_sync(full_sync=True)
-
-        assert mresp.json.call_count == 1
 
     def test_users_sync(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
 
-        # mock requests.get so that api call returns something we want
-        user_data = {'data': []}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = user_data
+        self.resource_name = 'users'
+        mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.users_sync(full_sync=True)
-
-        assert mresp.json.call_count == 1
 
     def test_custom_fields(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
