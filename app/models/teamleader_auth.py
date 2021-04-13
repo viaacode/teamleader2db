@@ -16,7 +16,7 @@ class TeamleaderAuth():
 
     def save(self, code='', auth_token='', refresh_token=''):
         print(
-            f"saving updated code, auth_token, refresh_token to table {self.table}", flush=True)
+            f"Updating auth_token, refresh_token and code in {self.table}", flush=True)
         if self.count() == 0:
             self.postgresql_wrapper.execute(
                 self.insert_tokens_sql(),
@@ -29,8 +29,6 @@ class TeamleaderAuth():
             )
 
     def read(self):
-        print(
-            f"loading code, auth_token, refresh_token from database table {self.table}", flush=True)
         row = self.postgresql_wrapper.execute(
             f'SELECT * FROM {self.table} LIMIT 1;')[0]
         code = row[1]

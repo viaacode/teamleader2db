@@ -40,7 +40,7 @@ class TestProjects:
 
     def test_prepare_vars_upsert(self, projects):
         tlres = TeamleaderEntryMock()
-        tlres.attributes['name'] = 'meeoo'
+        tlres.attributes['name'] = 'meemoo project'
         value = projects._prepare_vars_upsert(asdict(tlres), 'projects')
         assert value == (
             tlres.id,
@@ -48,14 +48,14 @@ class TestProjects:
             tlres.entry_to_json(),
         )
 
-    def test_upsert_ldap_results_many(self, projects):
+    def test_upsert_results_many(self, projects):
         psql_wrapper_mock = projects.postgresql_wrapper
 
         # Create 2 mock projects
         result_1 = TeamleaderEntryMock()
-        result_1.attributes['name'] = 'department1'
+        result_1.attributes['name'] = 'project1'
         result_2 = TeamleaderEntryMock()
-        result_2.attributes['name'] = 'department2'
+        result_2.attributes['name'] = 'project2'
         # Prepare to pass
         results = [([asdict(result_1), asdict(result_2)], 'projects')]
         projects.upsert_results(results)

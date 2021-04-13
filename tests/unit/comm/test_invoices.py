@@ -40,7 +40,7 @@ class TestInvoices:
 
     def test_prepare_vars_upsert(self, invoices):
         tlres = TeamleaderEntryMock()
-        tlres.attributes['name'] = 'meeoo'
+        tlres.attributes['name'] = 'meemoo invoice'
         value = invoices._prepare_vars_upsert(asdict(tlres), 'invoices')
         assert value == (
             tlres.id,
@@ -48,14 +48,14 @@ class TestInvoices:
             tlres.entry_to_json(),
         )
 
-    def test_upsert_ldap_results_many(self, invoices):
+    def test_upsert_results_many(self, invoices):
         psql_wrapper_mock = invoices.postgresql_wrapper
 
         # Create 2 mock invoices
         result_1 = TeamleaderEntryMock()
-        result_1.attributes['name'] = 'department1'
+        result_1.attributes['name'] = 'invoice1'
         result_2 = TeamleaderEntryMock()
-        result_2.attributes['name'] = 'department2'
+        result_2.attributes['name'] = 'invoice2'
         # Prepare to pass
         results = [([asdict(result_1), asdict(result_2)], 'invoices')]
         invoices.upsert_results(results)

@@ -40,7 +40,7 @@ class TestDepartments:
 
     def test_prepare_vars_upsert(self, departments):
         tlres = TeamleaderEntryMock()
-        tlres.attributes['name'] = 'meeoo'
+        tlres.attributes['name'] = 'meemoo department'
         value = departments._prepare_vars_upsert(asdict(tlres), 'departments')
         assert value == (
             tlres.id,
@@ -48,7 +48,7 @@ class TestDepartments:
             tlres.entry_to_json(),
         )
 
-    def test_upsert_ldap_results_many(self, departments):
+    def test_upsert_results_many(self, departments):
         psql_wrapper_mock = departments.postgresql_wrapper
 
         # Create 2 mock departments
