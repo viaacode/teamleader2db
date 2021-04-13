@@ -4,6 +4,7 @@
 from unittest.mock import patch, Mock, MagicMock
 from app.app import App
 
+API_URL = 'https://api.teamleader.eu'
 
 class MockResponse:
     def __init__(self, code, data):
@@ -12,6 +13,7 @@ class MockResponse:
 
     def json(self):
         return self.data
+
 
 
 @patch('app.app.Users')
@@ -28,14 +30,14 @@ class TestSync:
     def mock_api_calls(self, *args, **kwargs):
         url = args[0]
         if '.list' in url:
-            assert args[0] == f'api_uri/{self.resource_name}.list'
+            assert args[0] == f'{API_URL}/{self.resource_name}.list'
             page = kwargs['params']['page[number]']
             if page > 1:  # only mock a single page of data
                 response = MockResponse(200, {'data': []})
             else:
                 response = MockResponse(200, {'data': [{'id': 'uuid1'}]})
         elif '.info' in url:
-            assert args[0] == f'api_uri/{self.resource_name}.info'
+            assert args[0] == f'{API_URL}/{self.resource_name}.info'
             response = MockResponse(
                 200, {'data': {'id': 'uuid1', 'data': 'company data here'}})
         else:
