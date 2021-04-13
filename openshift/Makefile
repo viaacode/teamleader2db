@@ -26,7 +26,7 @@ lint:
 	docker container run --name "${APP_NAME}_lint" \
 					--entrypoint flake8 "${REGISTRY}/${IMAGE_NAME}:${VERSION}" \
 					--exit-zero \
-					--max-line-length=88
+					--max-line-length=120
 push: 	login
 	docker push ${REGISTRY}/${IMAGE_NAME}:${VERSION}
 
