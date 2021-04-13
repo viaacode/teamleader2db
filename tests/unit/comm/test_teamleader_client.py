@@ -23,6 +23,7 @@ from app.app import App
 @patch('app.app.Contacts')
 @patch('app.comm.teamleader_client.TeamleaderAuth')
 @patch('app.comm.teamleader_client.requests')
+@patch('app.comm.teamleader_client.RATE_LIMIT_SLEEP', 0)
 class TestTeamleaderClient:
 
     # def mock_api_calls(self, *args, **kwargs):

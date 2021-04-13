@@ -25,6 +25,7 @@ class MockResponse:
 @patch('app.app.Contacts')
 @patch('app.comm.teamleader_client.TeamleaderAuth')
 @patch('app.comm.teamleader_client.requests')
+@patch('app.comm.teamleader_client.RATE_LIMIT_SLEEP', 0)
 class TestSync:
 
     def mock_api_calls(self, *args, **kwargs):
