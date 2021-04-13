@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import patch, MagicMock
 from app.app import App
 
 API_URL = 'https://api.teamleader.eu'
+
 
 class MockResponse:
     def __init__(self, code, data):
@@ -13,7 +14,6 @@ class MockResponse:
 
     def json(self):
         return self.data
-
 
 
 @patch('app.app.Users')
