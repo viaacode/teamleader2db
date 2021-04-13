@@ -63,7 +63,6 @@ class TestTeamleaderClient:
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
-
         self.list_unauthorized = True
         self.resource_name = 'contacts'
         mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
@@ -80,7 +79,6 @@ class TestTeamleaderClient:
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
-
         self.details_unauthorized = True
         self.resource_name = 'contacts'
         mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
@@ -93,15 +91,31 @@ class TestTeamleaderClient:
         assert result == {'data': 'resource data here', 'id': 'uuid1'}
         assert not self.details_unauthorized
 
-    def test_authcode_callback(self, mock_requests, mock_auth_table, *models):
-        # /sync/oauth?code='supplied_by_teamleader
-        pass
+    def test_authcode_callback_invalid(
+            self, mock_requests,
+            mock_auth_table, *models):
+        ma = mock_auth_table.return_value
+        ma.count.return_value = 0
+        app = App()
+        result = app.tlc.authcode_callback('auth_code', 'wrong_state')
+        assert result == 'code rejected'
+
+    def test_authcode_callback_valid(
+            self, mock_requests,
+            mock_auth_table, *models):
+        ma = mock_auth_table.return_value
+        ma.count.return_value = 0
+        app = App()
+        result = app.tlc.authcode_callback(
+            'auth_code',
+            'code_to_validate_callback'
+        )
+        assert result == 'code accepted'
 
     def test_custom_fields(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
-
         # mock requests.get so that api call returns something we want
         fields_data = {'data': []}
         mresp = Mock()
@@ -117,7 +131,6 @@ class TestTeamleaderClient:
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
-
         # mock requests.get so that api call returns something we want
         field_data = {'data': {'id': 'uidhere'}}
         mresp = Mock()
@@ -133,7 +146,6 @@ class TestTeamleaderClient:
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
         app = App()
-
         # mock requests.get so that api call returns something we want
         user_data = {'data': {'name': 'current_user'}}
         mresp = Mock()
