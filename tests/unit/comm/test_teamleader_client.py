@@ -31,7 +31,7 @@ class TestTeamleaderClient:
     def mock_api_calls(self, *args, **kwargs):
         url = args[0]
         if '.list' in url:
-            assert args[0] in f'{API_URL}/{self.resource_name}.list'
+            assert args[0] == f'{API_URL}/{self.resource_name}.list'
             page = kwargs['params']['page[number]']
             if page > 1:  # only mock a single page of data
                 return MockResponse(200, {'data': []})
@@ -43,7 +43,7 @@ class TestTeamleaderClient:
                     return MockResponse(200, {'data': [{'id': 'uuid1'}]})
 
         if '.info' in url:
-            assert args[0] in f'{API_URL}/{self.resource_name}.info'
+            assert args[0] == f'{API_URL}/{self.resource_name}.info'
 
             if self.details_unauthorized:
                 self.details_unauthorized = False
