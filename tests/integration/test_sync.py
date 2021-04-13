@@ -105,19 +105,3 @@ class TestSync:
         self.resource_name = 'users'
         mock_requests.get = MagicMock(side_effect=self.mock_api_calls)
         app.users_sync(full_sync=True)
-
-    def test_custom_fields(self, mock_requests, mock_auth_table, *models):
-        ma = mock_auth_table.return_value
-        ma.count.return_value = 0
-        app = App()
-
-        # mock requests.get so that api call returns something we want
-        user_data = {'data': []}
-        mresp = Mock()
-        mock_requests.get.return_value = mresp
-        mresp.status_code = 200
-        mresp.json.return_value = user_data
-        fields = app.tlc.list_custom_fields()
-
-        assert mresp.json.call_count == 1
-        assert fields == []
