@@ -93,6 +93,10 @@ class TestTeamleaderClient:
         assert result == {'data': 'resource data here', 'id': 'uuid1'}
         assert not self.details_unauthorized
 
+    def test_authcode_callback(self, mock_requests, mock_auth_table, *models):
+        # /sync/oauth?code='supplied_by_teamleader
+        pass
+
     def test_custom_fields(self, mock_requests, mock_auth_table, *models):
         ma = mock_auth_table.return_value
         ma.count.return_value = 0
