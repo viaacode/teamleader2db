@@ -44,16 +44,16 @@ class App:
     def auth_callback(self, code, state):
         return self.tlc.authcode_callback(code, state)
 
-    def resource_sync(self, name, list_call, details_call, model, full_sync=False):
+    def resource_sync(self, list_call, details_call, model, full_sync=False):
         if full_sync:
             model.truncate_table()
 
         modified_since = model.max_last_modified_timestamp()
         if modified_since:
             logger.info(
-                f"{name} sync since {modified_since.isoformat()} started...")
+                f"{model.name} delta since {modified_since.isoformat()} started.")
         else:
-            logger.info(f"{name} full synchronization started...")
+            logger.info(f"{model.name} full synchronization started.")
 
         page = 1
         resp = [1]
@@ -65,21 +65,21 @@ class App:
                 for res in resp:
                     print('.', end='', flush=True)
                     detailed_list.append(details_call(res['id']))
-                model.upsert_results([(detailed_list, name)])
+                model.upsert_results([(detailed_list, model.name)])
                 page += 1
                 total_synced += len(resp)
-                print(f"\n{name} synced {len(resp)} entries", flush=True)
+                print(f"\n{model.name} synced {len(resp)} records", flush=True)
 
-        logger.info(f"Done, synchronized {total_synced} {name}")
+        logger.info(f"Done, synchronized {total_synced} {model.name}")
 
     def companies_sync(self, full_sync=False):
         """ Syncs teamleader companies into target database
 
             Arguments:
             modified_since -- Filters teamleader results with updated_since
-                              If None, it will retrieve all teamleader entries.
+                              If None, it will retrieve all teamleader companies.
         """
-        self.resource_sync('companies', self.tlc.list_companies, self.tlc.get_company,
+        self.resource_sync(self.tlc.list_companies, self.tlc.get_company,
                            self.companies, full_sync)
 
     def contacts_sync(self, full_sync=False):
@@ -87,9 +87,9 @@ class App:
 
             Arguments:
             modified_since -- Filters teamleader results with updated_since
-                              If None, it will retrieve all teamleader entries.
+                              If None, it will retrieve all teamleader contacts.
         """
-        self.resource_sync('contacts', self.tlc.list_contacts, self.tlc.get_contact,
+        self.resource_sync(self.tlc.list_contacts, self.tlc.get_contact,
                            self.contacts, full_sync)
 
     def departments_sync(self, full_sync=False):
@@ -97,9 +97,9 @@ class App:
 
             Arguments:
             modified_since -- Filters teamleader results with updated_since
-                              If None, it will retrieve all teamleader entries.
+                              If None, it will retrieve all teamleader departments.
         """
-        self.resource_sync('departments', self.tlc.list_departments, self.tlc.get_department,
+        self.resource_sync(self.tlc.list_departments, self.tlc.get_department,
                            self.departments, full_sync)
 
     def events_sync(self, full_sync=False):
@@ -107,9 +107,9 @@ class App:
 
             Arguments:
             modified_since -- Filters teamleader results with updated_since
-                              If None, it will retrieve all teamleader entries.
+                              If None, it will retrieve all teamleader events.
         """
-        self.resource_sync('events', self.tlc.list_events, self.tlc.get_event,
+        self.resource_sync(self.tlc.list_events, self.tlc.get_event,
                            self.events, full_sync)
 
     def invoices_sync(self, full_sync=False):
@@ -119,7 +119,7 @@ class App:
             modified_since -- Filters teamleader results with updated_since
                               If None, it will retrieve all teamleader invoices.
         """
-        self.resource_sync('invoices', self.tlc.list_invoices, self.tlc.get_invoice,
+        self.resource_sync(self.tlc.list_invoices, self.tlc.get_invoice,
                            self.invoices, full_sync)
 
     def projects_sync(self, full_sync=False):
@@ -129,7 +129,7 @@ class App:
             modified_since -- Filters teamleader projects with updated_since
                               If None, it will retrieve all teamleader projects.
         """
-        self.resource_sync('projects', self.tlc.list_projects, self.tlc.get_project,
+        self.resource_sync(self.tlc.list_projects, self.tlc.get_project,
                            self.projects, full_sync)
 
     def users_sync(self, full_sync=False):
@@ -139,7 +139,7 @@ class App:
             modified_since -- Filters teamleader users with updated_since
                               If None, it will retrieve all teamleader users.
         """
-        self.resource_sync('users', self.tlc.list_users, self.tlc.get_user,
+        self.resource_sync(self.tlc.list_users, self.tlc.get_user,
                            self.users, full_sync)
 
     def teamleader_sync(self, full_sync=False):

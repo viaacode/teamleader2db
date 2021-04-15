@@ -10,6 +10,7 @@ class Users(SyncModel):
 
     def __init__(self, db_params: dict, table_names: dict):
         self.table = table_names.get('users_table', 'tl_users')
+        self.name = 'users'
         self.postgresql_wrapper = PostgresqlWrapper(db_params)
         self.postgresql_wrapper.execute(
             Users.create_table_sql(self.table)

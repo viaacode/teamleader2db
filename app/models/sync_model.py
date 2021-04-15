@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import uuid
 from datetime import datetime
 
 
@@ -11,6 +12,7 @@ class SyncModel:
     Invoices, Projects, Users."""
 
     def __init(self, db_params: dict, table_names: dict):
+        self.name = 'syncmodel'
         pass
 
     def table_name(self):
@@ -104,3 +106,7 @@ class SyncModel:
             )
         self.postgresql_wrapper.executemany(
             self.upsert_entities_sql(), vars_list)
+
+    def insert_entity(self, date_time: datetime = datetime.now(), content='{"key": "value"}'):
+        vars = (str(uuid.uuid4()), self.name, content)
+        self.postgresql_wrapper.execute(self.upsert_entities_sql(), vars)

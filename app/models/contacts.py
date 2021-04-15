@@ -10,11 +10,8 @@ class Contacts(SyncModel):
 
     def __init__(self, db_params: dict, table_names: dict):
         self.table = table_names.get('contacts_table', 'tl_contacts')
+        self.name = 'contacts'
         self.postgresql_wrapper = PostgresqlWrapper(db_params)
         self.postgresql_wrapper.execute(
             Contacts.create_table_sql(self.table)
         )
-
-    # def insert_entity(self, date_time: datetime = datetime.now(), tl_type='contacts', content='{"key": "value"}'):
-    #     vars = (str(uuid.uuid4()), tl_type, content)
-    #     self.postgresql_wrapper.execute(self.upsert_entities_sql(), vars)
