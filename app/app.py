@@ -13,6 +13,7 @@ from app.models.events import Events
 from app.models.invoices import Invoices
 from app.models.projects import Projects
 from app.models.users import Users
+import csv
 
 
 # Initialize the logger and the configuration
@@ -169,6 +170,24 @@ class App:
         status['users'] = self.users.status()
 
         return status
+
+    # work in progress, exporting a csv file (background task like a sync above)
+    def export_csv(self):
+        with open('export.csv') as csvfile:
+            export = csv.writer(csvfile, delimiter=';', quotechar='"')
+            export.writerow(
+                [
+                    "or_id", "cp_name_catpro", "email", "phone",
+                    "website", "form_url", "description", "accountmanager"
+                ]
+            )
+            # todo iterate the contacts, fetch tl_content json, parse json
+            # and try to filter out data for above columns + write here.
+
+    # present download for latest exported csv file here
+    def download_csv(self):
+        # return file response with above generated csv file
+        pass
 
     def main(self):
         try:
