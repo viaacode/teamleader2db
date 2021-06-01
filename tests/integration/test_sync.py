@@ -40,7 +40,7 @@ class TestSync:
         elif '.info' in url:
             assert args[0] == f'{API_URL}/{self.resource_name}.info'
             response = MockResponse(
-                200, {'data': {'id': 'uuid1', 'data': 'company data here'}})
+                200, {'data': {'id': 'uuid1', 'data': 'api response data here'}})
         else:
             print(f"\n args={args} kwargs={kwargs}", flush=True)
 
