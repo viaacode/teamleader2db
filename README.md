@@ -65,10 +65,107 @@ code accepted
 ```
 Or rejected if something was wrong. After this the code, token, refresh_token are stored in db. And also after this the code will be invalid again (only useable once).
 
-## TODOS
 
-Write unit tests, integration tests, more documentation on cli usage etc.
-Especially further explain the code callback which is needed whenever a refresh_token fails. The regular token expiry using valid refresh token works completely now however.
-Reasons a refresh_token can become invalid are when we make changes in teamleader page for KnowledgeGraph integration https://marketplace.teamleader.eu/be/nl/beheer
+
+## Testing
+
+Use the makefile to execute the integration and unit tests:
+```
+$ make test
+===================================== test session starts =====================================
+platform darwin -- Python 3.8.5, pytest-5.3.5, py-1.10.0, pluggy-0.13.1
+rootdir: /Users/wschrep/FreelanceWork/VIAA/teamleader2db
+plugins: recording-0.11.0, cov-2.8.1, mock-3.5.1
+collected 68 items
+
+tests/api/test_api.py .....                                                             [  7%]
+tests/integration/test_sync.py .......                                                  [ 17%]
+tests/unit/test_app.py ....                                                             [ 23%]
+tests/unit/comm/test_companies.py ......                                                [ 32%]
+tests/unit/comm/test_departments.py ......                                              [ 41%]
+tests/unit/comm/test_events.py ......                                                   [ 50%]
+tests/unit/comm/test_invoices.py ......                                                 [ 58%]
+tests/unit/comm/test_projects.py ......                                                 [ 67%]
+tests/unit/comm/test_sqlwrapper.py ...                                                  [ 72%]
+tests/unit/comm/test_teamleader_auth.py ......                                          [ 80%]
+tests/unit/comm/test_teamleader_client.py .......                                       [ 91%]
+tests/unit/comm/test_users.py ......                                                    [100%]
+
+===================================== 68 passed in 1.78s ======================================
+```
+
+## Testing code coverage reporting
+
+The makefile has a nice target called 'coverage' use this to make a testing coverage report.
+
+```
+$ make coverage
+=================================== test session starts ====================================
+platform darwin -- Python 3.8.5, pytest-5.3.5, py-1.10.0, pluggy-0.13.1
+rootdir: /Users/wschrep/FreelanceWork/VIAA/teamleader2db
+plugins: recording-0.11.0, cov-2.8.1, mock-3.5.1
+collected 68 items                                                                         
+
+tests/api/test_api.py .....                                                          [  7%]
+tests/integration/test_sync.py .......                                               [ 17%]
+tests/unit/test_app.py ....                                                          [ 23%]
+tests/unit/comm/test_companies.py ......                                             [ 32%]
+tests/unit/comm/test_departments.py ......                                           [ 41%]
+tests/unit/comm/test_events.py ......                                                [ 50%]
+tests/unit/comm/test_invoices.py ......                                              [ 58%]
+tests/unit/comm/test_projects.py ......                                              [ 67%]
+tests/unit/comm/test_sqlwrapper.py ...                                               [ 72%]
+tests/unit/comm/test_teamleader_auth.py ......                                       [ 80%]
+tests/unit/comm/test_teamleader_client.py .......                                    [ 91%]
+tests/unit/comm/test_users.py ......                                                 [100%]
+
+---------- coverage: platform darwin, python 3.8.5-final-0 -----------
+Name                            Stmts   Miss  Cover
+---------------------------------------------------
+app/__init__.py                     0      0   100%
+app/api/__init__.py                 0      0   100%
+app/api/api.py                      5      0   100%
+app/api/routers/__init__.py         0      0   100%
+app/api/routers/health.py           5      0   100%
+app/api/routers/sync.py            32      3    91%
+app/app.py                         98      8    92%
+app/comm/__init__.py                0      0   100%
+app/comm/psql_wrapper.py           21      0   100%
+app/comm/teamleader_client.py     123     11    91%
+app/models/__init__.py              0      0   100%
+app/models/companies.py             8      0   100%
+app/models/contacts.py              8      0   100%
+app/models/departments.py           8      0   100%
+app/models/events.py                8      0   100%
+app/models/invoices.py              8      0   100%
+app/models/projects.py              8      0   100%
+app/models/sync_model.py           37      5    86%
+app/models/teamleader_auth.py      29      0   100%
+app/models/users.py                 8      0   100%
+app/server.py                      12      0   100%
+---------------------------------------------------
+TOTAL                             418     27    94%
+Coverage HTML written to dir htmlcov
+
+
+==================================== 68 passed in 2.91s ===================================
+```
+
+
+## Auth token expiry
+
+Teamleader has an original take on oauth2 and its token management system.
+Basically you first set up a code to be used here in the KnowledgeGraph integration:
+KnowledgeGraph integration https://marketplace.teamleader.eu/be/nl/beheer
+
+Whenever you save here it invalidates the refresh_token and any backend using it must update it's
+refresh token using an auth callback method. Basically you supply a code + secret and a callback will be made
+to a public https url with the actual token you need later on.
+
+With the refresh token you fetch an actual auth token to be used in further calls. And whenever you do this
+the refresh_token itself is updated to a new one that you will need to store in the db for later use (in case pod restarts).
+
+It's this last part that messes up if for instance you decide you have 2 pods or multiple instances running this flow of execution.
+Once the first client refreshes its auth token the refresh token is invalidated for all the others.
 
 

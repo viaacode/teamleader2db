@@ -51,6 +51,7 @@ format:
 .PHONY: test
 test:
 	@. python_env/bin/activate; \
+	cp config.yml.tst config.yml && \
 	python -m pytest
 
 
