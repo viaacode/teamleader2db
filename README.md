@@ -178,7 +178,7 @@ Error 400: {"errors":[{"code":8,"title":"The refresh token is invalid.","status"
 Login into teamleader and paste code callback link in browser: https://app.teamleader.eu/oauth2/authorize?client_id=75bd9426f541ea9be95142476c458023&response_type=code&redirect_uri=https://teamleader.sitweb.eu/oauth&state=qas_secret_state
 ```
 
-This means you need to login into teamleader.eu with an admin account and then paste the following link in your browser. Then the teamleader server will make a call to the redirect_uri specified which must match the one specified on the integration page and here you will see the code that is passed.
+This means you need to login into teamleader.eu with an admin account and then paste the above link in your browser. Then the teamleader server will make a call to the redirect_uri specified which must match the one specified on the integration page and here you will see the code that is passed.
 
 
 
@@ -196,14 +196,12 @@ code accepted
 Or rejected if something was wrong. After this the code, token, refresh_token are stored in db. And also after this the code will be invalid again (only useable once).
 
 
-This now updated the code, token and refresh_token in database. And from now on everything keeps working again. If a token expires the refresh_token is automatically used (and here is where teamleader is different from classic oauth2, the refresh_token is only useable once).
+This now updated the code, token and refresh_token in database. And from now on everything keeps working again. If a token expires the refresh_token is automatically used (and here is where teamleader is different from classic oauth2, the refresh_token is only useable once). The refresh_token is used to make a call that updates the auth_token and also update the refresh_token to a newer version. Then when the auth_token expires again later on the newer auth_token is used and that way it will keep on working as long as you only have a single point that maintains this refresh_token+auth_token pair.
 
 # Detailed teamleader authorization flow
 With the refresh token you fetch an actual auth token to be used in further calls. And whenever you do this
-the refresh_token itself is updated to a new one that you will need to store in the db for later use (in case pod restarts or for a later sync call when the auth_token is expired).
+the refresh_token itself is updated to a new one (the call returns both a new auth_token and refresh_token) that you will need to store in the db for later use.
 
-It's this last part that messes up if for instance you decide you have 2 pods or multiple instances running this flow of execution.
-Once the first client refreshes its auth token the refresh token is invalidated for all the others. And in this case you can either copy a valid auth_token or do the above described callback to get a new code to request an entirely new and valid refresh_token.
-
+It's this last part that can mess up if you have a local setup and your auth_token has expired because the pod on the server has already refreshed to a new pair. In this case you can temporarely just copy a valid auth_token from the openshift pod. Or (more elaborate) fetch a new code with above callback and set up you rlocal env with code+refresh_token and once its synced put the valid ones in an env var and clear out the tl_authorization table on openshift. Then when the pod restarts it will use the valid token pair and save results in the db.
 
 
