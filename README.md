@@ -198,7 +198,7 @@ Or rejected if something was wrong. After this the code, token, refresh_token ar
 
 This now updated the code, token and refresh_token in database. And from now on everything keeps working again. If a token expires the refresh_token is automatically used (and here is where teamleader is different from classic oauth2, the refresh_token is only useable once). The refresh_token is used to make a call that updates the auth_token and also update the refresh_token to a newer version. Then when the auth_token expires again later on the newer auth_token is used and that way it will keep on working as long as you only have a single point that maintains this refresh_token+auth_token pair.
 
-# Detailed teamleader authorization flow
+# Maintaining proper tokens, fixing authorization if it breaks
 With the refresh token you fetch an actual auth token to be used in further calls. And whenever you do this
 the refresh_token itself is updated to a new one (the call returns both a new auth_token and refresh_token) that you will need to store in the db for later use.
 
