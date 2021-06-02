@@ -1,6 +1,38 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#
+#  @Author: Walter Schreppers
+#
+#   app/comm/teamleader_client.py
+#
+#   TeamleaderClient handles communication with the exposed
+#   json api from Teamleader.
+#   a code, token and refresh_token is maintaned and updated in
+#   the database. Whenever a 401 response is returned we call
+#   auth_token_refresh to refresh the token and refresh_tokens.
+#   In case this fails (or when none have been saved yet) a url
+#   is generated using authcode_request_link. This links needs to
+#   be pasted into a browser and will result in a code response that
+#   allows us to refetch a valid refresh_token from scratch.
+#
+#   After authorization this client allows us to fetch the following resource
+#   list and detail calls:
+#   companies, contacts, invoices, events, users, departments and projects
+#
+#   and also the current used api user and make a list of all defined custom fields.
+#
+#   In order to fetch the custom field data we must use the details call (with .info in path)
+#   For instance tl_client.get_contact(uuid) will get all data + custom fields
+#   for a specific contact from the api. The list call is used to get a complete list of all
+#   contacts and their respective uuid's that are updated since a specific timestamp (None to get
+#   all entries in case of full sync) first.
+#
+#   Afterwards we make a details call (get_contact, get_company etc.)
+#   to get each contact with the custom field data included using the uuid fetched with a list
+#   call.
+#
+#   A similar approach is done for companies, events etc.
+#
 import requests
 import time
 from datetime import datetime

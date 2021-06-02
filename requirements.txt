@@ -1,3 +1,4 @@
+aiofiles==0.7.0
 viaa-chassis==0.2.0rc1
 psycopg2==2.8.4
 fastapi==0.63.0

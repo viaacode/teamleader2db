@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+#  @Author: Walter Schreppers
+#
+#   app/api/routers/health.py
+#
+#   Router for openshift liveness check
+#
 from fastapi import APIRouter
 
 router = APIRouter()

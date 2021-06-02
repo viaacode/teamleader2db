@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#
+#  @Author: Walter Schreppers
+#
+#   app/app.py
+#
+#   Main application this exposes some methods for syncing and csv exports
+#   using the argh library
+#
+#   The same methods are also linked to a swagger ui / fastapi json api calls.
+#   See api folder for the routers and routes in api.py and server.py where
+#   this is instantiated
+#
 import argh
 from psycopg2 import OperationalError as PSQLError
 from viaa.configuration import ConfigParser
@@ -169,6 +180,12 @@ class App:
         status['users'] = self.users.status()
 
         return status
+
+    def csv_path(self):
+        return "contacts_export.csv"
+
+    def export_csv(self):
+        self.contacts.export_csv(self.csv_path())
 
     def main(self):
         try:

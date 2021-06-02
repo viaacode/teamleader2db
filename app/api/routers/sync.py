@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+#  @Author: Walter Schreppers
+#
+#   app/api/routers/sync.py
+#
+#   Router to make full and delta syncs and show status of
+#   last sync or running sync job
+#
 from fastapi import APIRouter, BackgroundTasks
 from typing import Optional
 from app.app import App as SyncApp

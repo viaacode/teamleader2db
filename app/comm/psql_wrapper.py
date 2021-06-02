@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#
+#  @Author: Walter Schreppers
+#
+#   app/comm/psql_wrapper.py
+#
+#   PostgresqlWrapper that wraps postgres connection
+#   and also allows for our unit and integration tests to more
+#   easily mock it.
+#
 import psycopg2
 from functools import wraps
 

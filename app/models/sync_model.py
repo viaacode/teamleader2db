@@ -60,6 +60,15 @@ class SyncModel:
         );
         '''
 
+    # selects a page of data from our models database table
+    def select_page(self, limit=0, offset=0):
+        return self.postgresql_wrapper.execute(
+            f'''
+                SELECT * from {self.table} ORDER BY id LIMIT %s OFFSET %s
+            ''',
+            (limit, offset)
+        )
+
     def upsert_entities_sql(self):
         return f'''INSERT INTO {self.table} (
                                   tl_uuid,
