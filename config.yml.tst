@@ -3,8 +3,8 @@ viaa:
     level: DEBUG
 app:
   teamleader:
-    auth_uri: 'https://app.teamleader.eu'
-    api_uri: 'https://api.teamleader.eu'
+    auth_uri: 'https://focus.teamleader.eu'
+    api_uri: 'https://api.focus.teamleader.eu'
     client_id: 'fill_me_in'
     client_secret: 'fill_me_in'
     redirect_uri: 'https://public_openshift_route/sync/oauth'

@@ -4,7 +4,7 @@
 from unittest.mock import patch, MagicMock
 from app.app import App
 
-API_URL = 'https://api.teamleader.eu'
+API_URL = 'https://api.focus.teamleader.eu'
 
 
 class MockResponse:
