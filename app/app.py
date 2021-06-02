@@ -185,24 +185,68 @@ class App:
     def csv_path(self):
         return "contacts_export.csv"
 
-    # work in progress, exporting a csv file (background task like a sync above)
+    # TODO: refactor this out of the app.py into a seperate class...
     def export_csv(self):
         with open(self.csv_path(), 'w') as csvfile:
             export = csv.writer(csvfile, delimiter=';', quotechar='"')
+            # write header
             export.writerow(
                 [
                     "or_id", "cp_name_catpro", "email", "phone",
                     "website", "form_url", "description", "accountmanager"
                 ]
             )
-            # todo iterate the contacts, fetch tl_content json, parse json
-            # and try to filter out data for above columns + write here.
 
-            export.writerow(
-                [
-                    "some id", "company name", "test@something.com", "0486118836",
-                    "https://www.meemoo.be", "https://some_url", "omschrijving hier", "Mattias"
-                ]
+            # write contacts csv export rows based on tl_content json
+            batch_size = 100
+            total_contacts = self.contacts.count()
+            export_offset = 0
+            export_rows = 0
+            print(f"Contacts count in database = {total_contacts}", flush=True)
+
+            while export_offset < total_contacts:
+                contact_data = self.contacts.select_page(batch_size, export_offset)
+                export_offset += batch_size
+
+                for row in contact_data:
+                    # TODO: make dictionary cursor so we can use row['tl_content'] instead
+                    contact_json = row[2]
+                    print(f"contact_json={contact_json}, offset={export_offset}", flush=True)
+
+                    or_id = contact_json.get('or_id')
+                    cp_name_catpro = contact_json.get('cp_name_catpro')
+
+                    emails = contact_json.get('emails', [])
+                    email = ''
+                    for em in emails:
+                        if em['type'] == 'primary':
+                            email = em['email']
+
+                    telephones = contact_json.get('telephones', [])
+                    phone = ''
+                    for p in telephones:
+                        if p['type'] == 'phone':
+                            phone = p['number']
+
+                    website = contact_json.get('website')
+                    form_url = contact_json.get('web_url')
+                    description = contact_json.get('remarks')
+
+                    # i'm guessing this might be companies/position instead which can be
+                    # Consultant, Account manager, ...?
+                    accountmanager = contact_json.get('accountmanager')
+
+                    export.writerow([
+                        or_id, cp_name_catpro, email, phone,
+                        website, form_url, description, accountmanager
+                    ])
+                    export_rows += 1
+
+            print(
+                "Exported {} rows to csv file {} from {} db entries".format(
+                    export_rows, self.csv_path(), total_contacts
+                ),
+                flush=True
             )
 
     def main(self):
