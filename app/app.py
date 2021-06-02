@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#
+#  @Author: Walter Schreppers
+#
+#   app/app.py
+#
+#   Main application this exposes some methods for syncing and csv exports
+#   using the argh library
+#
+#   The same methods are also linked to a swagger ui / fastapi json api calls.
+#   See api folder for the routers and routes in api.py and server.py where
+#   this is instantiated
+#
 import argh
 from psycopg2 import OperationalError as PSQLError
 from viaa.configuration import ConfigParser
@@ -171,9 +182,12 @@ class App:
 
         return status
 
+    def csv_path(self):
+        return "contacts_export.csv"
+
     # work in progress, exporting a csv file (background task like a sync above)
     def export_csv(self):
-        with open('export.csv') as csvfile:
+        with open(self.csv_path(), 'w') as csvfile:
             export = csv.writer(csvfile, delimiter=';', quotechar='"')
             export.writerow(
                 [
@@ -184,10 +198,12 @@ class App:
             # todo iterate the contacts, fetch tl_content json, parse json
             # and try to filter out data for above columns + write here.
 
-    # present download for latest exported csv file here
-    def download_csv(self):
-        # return file response with above generated csv file
-        pass
+            export.writerow(
+                [
+                    "some id", "company name", "test@something.com", "0486118836",
+                    "https://www.meemoo.be", "https://some_url", "omschrijving hier", "Mattias"
+                ]
+            )
 
     def main(self):
         try:

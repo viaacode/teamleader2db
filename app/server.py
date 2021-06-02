@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#
+#  @Author: Walter Schreppers
+#
+#   app/server.py
+#
+#   Webserver implementation using FastAPI to expose a json api to various tasks
+#   for syncing data from teamleader to a database and to export a csv file of the
+#   contacts.
+#
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from viaa.configuration import ConfigParser
