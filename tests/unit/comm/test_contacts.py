@@ -11,6 +11,7 @@ from app.models.contacts import Contacts
 @dataclass
 class ModifyTimestampMock:
     """Mock class of the returned modifyTimestamp by LDAP server"""
+
     value: str = str(datetime.now())
 
 
@@ -95,7 +96,29 @@ class TestContacts:
         assert 'synced_entries' in status
         assert 'last_modified' in status
 
-    @pytest.mark.skip(reason="work in progress")
-    def test_export_csv(self, contacts):
+    def select_contacts_result(self):
+        return [
+            [1, 'uuid1', json.loads('{"website":"mocking champions ;)"}')],
+            [2, 'uuid2', json.loads('{"website":"mocking champions 2"}')],
+        ]
+
+    @patch.object(Contacts, 'count')
+    def test_export_csv(self, count_mock, contacts):
+        # patch the self.count method to return 2 contacts
+        def contact_count_result():
+            return 2
+
+        count_mock.side_effect = contact_count_result
+
+        # return 2 fixtures with json like we get back from VKC
+        # by mocking the select_page call with some seed/fixture data
+        psql_wrapper_mock = contacts.postgresql_wrapper
+        psql_wrapper_mock.execute.return_value = self.select_contacts_result()
         contacts.export_csv('tests/test_export.csv')
-        assert False
+
+        # open the tests/test_export.csv file
+        # read csv and see columns are filled in etc.
+
+        # add assertions checking that resulting csv matches our fixture data
+
+        assert True
