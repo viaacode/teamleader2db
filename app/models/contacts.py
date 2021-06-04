@@ -94,10 +94,6 @@ class Contacts(SyncModel):
                     # TODO: make dictionary cursor so we can use row['tl_content'] instead
                     contact_json = row[2]
 
-                    # debugging print, remove in production....
-                    print(
-                        f"contact_json={contact_json}, offset={export_offset}", flush=True)
-
                     export.writerow([
                         self.parse_or_id(contact_json),
                         self.parse_cp_name_catpro(contact_json),

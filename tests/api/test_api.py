@@ -37,9 +37,8 @@ class TestApi:
         response = client.get("/export/export_status")
         assert response.status_code == 200
         content = response.json()
-        assert content['export_running'] == False
-        assert 'last_export' not in content
-        assert 'Please run an export first with POST /export/export_csv' in content['status']
+        assert not content['export_running']
+        assert 'Please run an export first with POST /export/export_csv' in content['last_export']
 
     def test_contact_csv_export(self, client):
         response = client.post("/export/export_csv")
@@ -47,11 +46,11 @@ class TestApi:
         content = response.json()
         assert "Contacts csv export started. Check status for completion" in content['status']
 
-    def test_contact_csv_status(self, client):
+    def test_contact_csv_status_after_export(self, client):
         response = client.get("/export/export_status")
         assert response.status_code == 200
         content = response.json()
-        assert content['export_running'] == False
+        assert not content['export_running']
         assert 'last_export' in content
 
     def test_contact_csv_download(self, client):
