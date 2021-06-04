@@ -47,43 +47,43 @@ class TestContacts:
             tlres.entry_to_json(),
         )
 
-    # def test_upsert_results_many(self, contacts):
-    #     psql_wrapper_mock = contacts.postgresql_wrapper
+    def test_contact_upsert_results_many(self, contacts):
+        psql_wrapper_mock = contacts.postgresql_wrapper
 
-    #     # Create 2 mock contacts
-    #     result_1 = TeamleaderEntryMock()
-    #     result_1.attributes['name'] = 'comp1'
-    #     result_2 = TeamleaderEntryMock()
-    #     result_2.attributes['name'] = 'comp2'
-    #     # Prepare to pass
-    #     results = [([asdict(result_1), asdict(result_2)], 'contacts')]
-    #     contacts.upsert_results(results)
+        # Create 2 mock contacts
+        result_1 = TeamleaderEntryMock()
+        result_1.attributes['name'] = 'contact1'
+        result_2 = TeamleaderEntryMock()
+        result_2.attributes['name'] = 'contact2'
+        # Prepare to pass
+        results = [([asdict(result_1), asdict(result_2)], 'contacts')]
+        contacts.upsert_results(results)
 
-    #     # The transformed mock teamleader result as tuple
-    #     val1 = contacts._prepare_vars_upsert(asdict(result_1), 'contacts')
-    #     val2 = contacts._prepare_vars_upsert(asdict(result_2), 'contacts')
+        # The transformed mock teamleader result as tuple
+        val1 = contacts._prepare_vars_upsert(asdict(result_1), 'contacts')
+        val2 = contacts._prepare_vars_upsert(asdict(result_2), 'contacts')
 
-    #     assert psql_wrapper_mock.executemany.call_count == 1
-    #     assert psql_wrapper_mock.executemany.call_args[0][0] == contacts.upsert_entities_sql(
-    #     )
-    #     assert psql_wrapper_mock.executemany.call_args[0][1] == [val1, val2]
+        assert psql_wrapper_mock.executemany.call_count == 1
+        assert psql_wrapper_mock.executemany.call_args[0][0] == contacts.upsert_entities_sql(
+        )
+        assert psql_wrapper_mock.executemany.call_args[0][1] == [val1, val2]
 
-    # def test_max_last_modified_timestamp(self, contacts):
-    #     psql_wrapper_mock = contacts.postgresql_wrapper
-    #     dt = datetime.now()
-    #     psql_wrapper_mock.execute.return_value = [[dt]]
-    #     value = contacts.max_last_modified_timestamp()
-    #     assert psql_wrapper_mock.execute.call_args[0][0] == contacts.max_last_modified_sql(
-    #     )
-    #     assert value == dt
+    def test_contact_last_modified_timestamp(self, contacts):
+        psql_wrapper_mock = contacts.postgresql_wrapper
+        dt = datetime.now()
+        psql_wrapper_mock.execute.return_value = [[dt]]
+        value = contacts.max_last_modified_timestamp()
+        assert psql_wrapper_mock.execute.call_args[0][0] == contacts.max_last_modified_sql(
+        )
+        assert value == dt
 
-    # def test_count(self, contacts):
-    #     psql_wrapper_mock = contacts.postgresql_wrapper
-    #     psql_wrapper_mock.execute.return_value = [[5]]
-    #     value = contacts.count()
-    #     assert psql_wrapper_mock.execute.call_args[0][0] == contacts.count_sql(
-    #     )
-    #     assert value == 5
+    def test_contact_count(self, contacts):
+        psql_wrapper_mock = contacts.postgresql_wrapper
+        psql_wrapper_mock.execute.return_value = [[5]]
+        value = contacts.count()
+        assert psql_wrapper_mock.execute.call_args[0][0] == contacts.count_sql(
+        )
+        assert value == 5
 
     def test_table_name(self, contacts):
         assert contacts.table_name() == 'tl_contacts'
@@ -94,3 +94,9 @@ class TestContacts:
         assert status['database_table'] == 'tl_contacts'
         assert 'synced_entries' in status
         assert 'last_modified' in status
+
+    @pytest.mark.skip(reason="work in progress")
+    def test_export_csv(self, contacts):
+        omit('work in progress')
+        contacts.export_csv('tests/test_export.csv')
+        assert False

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import pytest
 from unittest.mock import patch
 # from psycopg2 import OperationalError as PSQLError
 from app.app import App
@@ -58,16 +59,15 @@ class TestApp:
         call_arg = sync_mock.call_args[1]
         assert call_arg['full_sync'] is False
 
-    # test broken, systemerror only thrown with make coverage, not with make test
-    # def test_argh_command_line_help(
-    #     self,
-    #     teamleader_client_mock,
-    #     models_mock*
-    # ):
-    #     app = App()
-    #     __import__('pdb').set_trace()
-    #     with pytest.raises(SystemExit):
-    #         app.main()
+    @pytest.mark.skip(reason="systemerror only thrown with make coverage, not with make test")
+    def test_argh_command_line_help(
+        self,
+        teamleader_client_mock,
+        *models_mock
+    ):
+        app = App()
+        with pytest.raises(SystemExit):
+            app.main()
 
     def test_main_psql_error(
         self,
