@@ -106,12 +106,7 @@ class Contacts(SyncModel):
                 ])
                 export_rows += 1
 
-        print(
-            "Exported {} rows to csv file generated from {} db entries".format(
-                export_rows, total_contacts
-            ),
-            flush=True
-        )
+        print(f"Exported {export_rows} contacts to csv file.", flush=True)
 
     def export_csv(self, csv_path):
         with open(csv_path, 'w') as csvfile:
