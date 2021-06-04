@@ -33,6 +33,33 @@ class TestApi:
         content = response.json()
         assert 'Teamleader sync started' in content['status']
 
+    def test_contact_csv_status(self, client):
+        response = client.get("/export/export_status")
+        assert response.status_code == 200
+        content = response.json()
+        assert not content['export_running']
+        assert 'Please run an export first with POST /export/export_csv' in content['last_export']
+
+    def test_contact_csv_export(self, client):
+        response = client.post("/export/export_csv")
+        assert response.status_code == 200
+        content = response.json()
+        assert "Contacts csv export started. Check status for completion" in content['status']
+
+    def test_contact_csv_status_after_export(self, client):
+        response = client.get("/export/export_status")
+        assert response.status_code == 200
+        content = response.json()
+        assert not content['export_running']
+        assert 'last_export' in content
+
+    def test_contact_csv_download(self, client):
+        response = client.get("/export/download_csv")
+        assert response.status_code == 200
+
+        assert response.headers['content-type'] == 'text/csv; charset=utf-8'
+        assert response.headers['content-disposition'] == 'attachment; filename="contacts_export.csv"'
+
     def test_health(self, client):
         response = client.get("/health/live")
         assert response.status_code == 200

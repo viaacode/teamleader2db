@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import json
-import uuid
 from datetime import datetime
 
 
@@ -116,6 +115,8 @@ class SyncModel:
         self.postgresql_wrapper.executemany(
             self.upsert_entities_sql(), vars_list)
 
-    def insert_entity(self, date_time: datetime = datetime.now(), content='{"key": "value"}'):
-        vars = (str(uuid.uuid4()), self.name, content)
-        self.postgresql_wrapper.execute(self.upsert_entities_sql(), vars)
+# deprecated/unused
+# import uuid
+#     def insert_entity(self, date_time: datetime = datetime.now(), content='{"key": "value"}'):
+#         vars = (str(uuid.uuid4()), self.name, content)
+#         self.postgresql_wrapper.execute(self.upsert_entities_sql(), vars)
