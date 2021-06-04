@@ -96,10 +96,43 @@ class TestContacts:
         assert 'synced_entries' in status
         assert 'last_modified' in status
 
-    def select_contacts_result(self):
+    def select_contacts_fixture(self):
         return [
-            [1, 'uuid1', json.loads('{"website":"mocking champions ;)"}')],
-            [2, 'uuid2', json.loads('{"website":"mocking champions 2"}')],
+            [
+                1, 'uuid1',
+                json.loads("""
+                    {
+                        "website":"http://website1.com",
+                        "weburl":"http://weburl1.com",
+                        "emails":[
+                            {
+                                "type": "primary",
+                                "email": "walter@meemoo.be"
+                            }
+                        ]
+                    }""")
+            ],
+            [
+                2, 'uuid2',
+                json.loads("""
+                    {
+                        "website":"http://website2.com",
+                        "weburl":"http://weburl2.com",
+                        "emails":[
+                            {
+                                "type": "primary",
+                                "email": "somebodye@meemoo.be"
+                            }
+                        ],
+                        "telephones":[
+                            {
+                                "type": "phone",
+                                "number": "0486118833"
+                            }
+                        ]
+                    }""")
+            ],
+            [3, 'uuid3', json.loads('{"remarks": "beschrijving test"}')]
         ]
 
     @patch.object(Contacts, 'count')
@@ -113,7 +146,7 @@ class TestContacts:
         # return 2 fixtures with json like we get back from VKC
         # by mocking the select_page call with some seed/fixture data
         psql_wrapper_mock = contacts.postgresql_wrapper
-        psql_wrapper_mock.execute.return_value = self.select_contacts_result()
+        psql_wrapper_mock.execute.return_value = self.select_contacts_fixture()
         contacts.export_csv('tests/test_export.csv')
 
         # open the tests/test_export.csv file
