@@ -1,6 +1,7 @@
 import pytest
 import uuid
 import json
+import io
 from unittest.mock import patch
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
@@ -147,11 +148,31 @@ class TestContacts:
         # by mocking the select_page call with some seed/fixture data
         psql_wrapper_mock = contacts.postgresql_wrapper
         psql_wrapper_mock.execute.return_value = self.select_contacts_fixture()
-        contacts.export_csv('tests/test_export.csv')
 
-        # open the tests/test_export.csv file
-        # read csv and see columns are filled in etc.
+        # this would work but writes an actual file
+        # contacts.export_csv('tests/test_export.csv')
 
-        # add assertions checking that resulting csv matches our fixture data
+        # use stringio instead of actual file
+        # we refactored out write_contacts_csv and pass a stringio object instead
+        testfile = io.StringIO()
+        contacts.write_contacts_csv(testfile)
+        testfile.seek(0)
 
-        assert True
+        contacts_csv = testfile.read()
+        csv_rows = contacts_csv.split('\n')
+        csv_header = csv_rows[0].split(';')
+
+        # test csv output header is complient
+        assert csv_header[0] == 'or_id'
+        assert csv_header[1] == 'cp_name_catpro'
+        assert csv_header[2] == 'email'
+        assert csv_header[3] == 'phone'
+        assert csv_header[4] == 'website'
+        assert csv_header[5] == 'form_url'
+        assert csv_header[6] == 'description'
+        assert csv_header[7].strip() == 'accountmanager'
+
+        # test rows match up with fixture data above
+        assert csv_rows[1].strip() == ';;walter@meemoo.be;;http://website1.com;;;'
+        assert csv_rows[2].strip() == ';;somebodye@meemoo.be;0486118833;http://website2.com;;;'
+        assert csv_rows[3].strip() == ';;;;;;beschrijving test;'

@@ -68,47 +68,51 @@ class Contacts(SyncModel):
         # Consultant, Account manager, ...?
         return contact_json.get('accountmanager')
 
+    def write_contacts_csv(self, csvfile):
+        export = csv.writer(csvfile, delimiter=';', quotechar='"')
+
+        # write header
+        export.writerow(
+            [
+                "or_id", "cp_name_catpro", "email", "phone",
+                "website", "form_url", "description", "accountmanager"
+            ]
+        )
+
+        # write contacts csv export rows based on tl_content json
+        batch_size = 100
+        total_contacts = self.count()
+        export_offset = 0
+        export_rows = 0
+        print(f"Contacts count in database = {total_contacts}", flush=True)
+
+        while export_offset < total_contacts:
+            contact_data = self.select_page(batch_size, export_offset)
+            export_offset += batch_size
+
+            for row in contact_data:
+                # TODO: make dictionary cursor so we can use row['tl_content'] instead
+                contact_json = row[2]
+
+                export.writerow([
+                    self.parse_or_id(contact_json),
+                    self.parse_cp_name_catpro(contact_json),
+                    self.parse_email(contact_json),
+                    self.parse_phone(contact_json),
+                    self.parse_website(contact_json),
+                    self.parse_form_url(contact_json),
+                    self.parse_description(contact_json),
+                    self.parse_accountmanager(contact_json)
+                ])
+                export_rows += 1
+
+        print(
+            "Exported {} rows to csv file generated from {} db entries".format(
+                export_rows, total_contacts
+            ),
+            flush=True
+        )
+
     def export_csv(self, csv_path):
         with open(csv_path, 'w') as csvfile:
-            export = csv.writer(csvfile, delimiter=';', quotechar='"')
-            # write header
-            export.writerow(
-                [
-                    "or_id", "cp_name_catpro", "email", "phone",
-                    "website", "form_url", "description", "accountmanager"
-                ]
-            )
-
-            # write contacts csv export rows based on tl_content json
-            batch_size = 100
-            total_contacts = self.count()
-            export_offset = 0
-            export_rows = 0
-            print(f"Contacts count in database = {total_contacts}", flush=True)
-
-            while export_offset < total_contacts:
-                contact_data = self.select_page(batch_size, export_offset)
-                export_offset += batch_size
-
-                for row in contact_data:
-                    # TODO: make dictionary cursor so we can use row['tl_content'] instead
-                    contact_json = row[2]
-
-                    export.writerow([
-                        self.parse_or_id(contact_json),
-                        self.parse_cp_name_catpro(contact_json),
-                        self.parse_email(contact_json),
-                        self.parse_phone(contact_json),
-                        self.parse_website(contact_json),
-                        self.parse_form_url(contact_json),
-                        self.parse_description(contact_json),
-                        self.parse_accountmanager(contact_json)
-                    ])
-                    export_rows += 1
-
-            print(
-                "Exported {} rows to csv file {} from {} db entries".format(
-                    export_rows, csv_path, total_contacts
-                ),
-                flush=True
-            )
+            self.write_contacts_csv(csvfile)
