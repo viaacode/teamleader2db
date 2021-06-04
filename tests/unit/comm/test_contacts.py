@@ -97,6 +97,5 @@ class TestContacts:
 
     @pytest.mark.skip(reason="work in progress")
     def test_export_csv(self, contacts):
-        omit('work in progress')
         contacts.export_csv('tests/test_export.csv')
         assert False
