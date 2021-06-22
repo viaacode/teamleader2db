@@ -11,10 +11,11 @@
 #
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
+from fastapi_route_logger_middleware import RouteLoggerMiddleware
 from viaa.configuration import ConfigParser
 from viaa.observability import logging
-
 from app.api.api import api_router
+
 
 app = FastAPI(
     title="Teamleader2Db",
@@ -23,9 +24,15 @@ app = FastAPI(
 )
 
 app.include_router(api_router)
-
 config = ConfigParser()
 log = logging.get_logger(__name__, config=config)
+
+# we disable logging of health calls
+app.add_middleware(
+    RouteLoggerMiddleware,
+    logger=log,
+    skip_routes=['/health']
+)
 
 
 # make root show the swagger docs (and hide it from the documentation)
