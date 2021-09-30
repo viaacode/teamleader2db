@@ -146,10 +146,10 @@ Coverage HTML written to dir htmlcov
 
 Teamleader has an original take on oauth2 and its token management system.
 Basically you first set up a code to be used here in the KnowledgeGraph integration:
-KnowledgeGraph integration https://marketplace.teamleader.eu/be/nl/beheer
+KnowledgeGraph integration https://marketplace.focus.teamleader.eu/be/nl/beheer
 
 More specifically for the qas environment you need to use the client_id and secret here:
-https://marketplace.teamleader.eu/be/nl/ontwikkel/integraties/b88413
+https://marketplace.focus.teamleader.eu/be/nl/ontwikkel/integraties/b88413
 
 
 Whenever you save here it invalidates the refresh_token and any backend using it must update it's
@@ -175,10 +175,10 @@ To initially bootstrap your 'code' or whenever the refresh_token is invalid and 
 ```
 Error 400: {"errors":[{"code":8,"title":"The refresh token is invalid.","status":400,"meta":{"type":"invalid_request","hint":"Token has been revoked"}}]} in handle_token_response
 
-Login into teamleader and paste code callback link in browser: https://app.teamleader.eu/oauth2/authorize?client_id=75bd9426f541ea9be95142476c458023&response_type=code&redirect_uri=https://teamleader.sitweb.eu/oauth&state=qas_secret_state
+Login into teamleader and paste code callback link in browser: https://focus.teamleader.eu/oauth2/authorize?client_id=75bd9426f541ea9be95142476c458023&response_type=code&redirect_uri=https://teamleader.sitweb.eu/oauth&state=qas_secret_state
 ```
 
-This means you need to login into teamleader.eu with an admin account and then paste the above link in your browser. Then the teamleader server will make a call to the redirect_uri specified which must match the one specified on the integration page and here you will see the code that is passed.
+This means you need to login into focus.teamleader.eu with an admin account and then paste the above link in your browser. Then the teamleader server will make a call to the redirect_uri specified which must match the one specified on the integration page and here you will see the code that is passed.
 
 
 
