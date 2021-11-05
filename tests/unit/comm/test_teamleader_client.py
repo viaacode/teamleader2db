@@ -23,6 +23,7 @@ class MockResponse:
 @patch('app.app.Departments')
 @patch('app.app.Companies')
 @patch('app.app.Contacts')
+@patch('app.app.CustomFields')
 @patch('app.comm.teamleader_client.TeamleaderAuth')
 @patch('app.comm.teamleader_client.requests')
 @patch('app.comm.teamleader_client.RATE_LIMIT_SLEEP', 0)

@@ -14,6 +14,7 @@ from app.app import App
 @patch('app.app.Departments')
 @patch('app.app.Companies')
 @patch('app.app.Contacts')
+@patch('app.app.CustomFields')
 @patch('app.comm.teamleader_client.TeamleaderAuth')
 @patch("app.app.TeamleaderClient")
 class TestApp:
@@ -23,12 +24,13 @@ class TestApp:
         self,
         sync_mock,
         teamleader_client_mock,
-        tl_auth_mock, contacts_mock, companies_mock, departments_mock,
+        tl_auth_mock, custom_fields_mock, contacts_mock, companies_mock, departments_mock,
         events_mock, invoices_mock, projects_mock, users_mock
     ):
         # Mock max_last_modified_timestamp to return None
         companies_mock().max_last_modified_timestamp.return_value = None
         contacts_mock().max_last_modified_timestamp.return_value = None
+        custom_fields_mock().max_last_modified_timestamp.return_value = None
         departments_mock().max_last_modified_timestamp.return_value = None
         events_mock().max_last_modified_timestamp.return_value = None
         invoices_mock().max_last_modified_timestamp.return_value = None

@@ -24,6 +24,7 @@ from app.models.events import Events
 from app.models.invoices import Invoices
 from app.models.projects import Projects
 from app.models.users import Users
+from app.models.custom_fields import CustomFields
 
 
 # Initialize the logger and the configuration
@@ -51,6 +52,7 @@ class App:
         self.invoices = Invoices(db_conf, table_names)
         self.projects = Projects(db_conf, table_names)
         self.users = Users(db_conf, table_names)
+        self.custom_fields = CustomFields(db_conf, table_names)
 
     def auth_callback(self, code, state):
         return self.tlc.authcode_callback(code, state)
@@ -102,6 +104,16 @@ class App:
         """
         self.resource_sync(self.tlc.list_contacts, self.tlc.get_contact,
                            self.contacts, full_sync)
+
+    def custom_fields_sync(self, full_sync=False):
+        """ Syncs teamleader custom_fields into target database
+
+            Arguments:
+            modified_since -- Filters teamleader results with updated_since
+                              If None, it will retrieve all teamleader custom_fields.
+        """
+        self.resource_sync(self.tlc.list_custom_fields, self.tlc.get_custom_field,
+                           self.custom_fields, full_sync)
 
     def departments_sync(self, full_sync=False):
         """ Syncs teamleader departments into target database
@@ -161,6 +173,7 @@ class App:
 
         self.companies_sync(full_sync)
         self.contacts_sync(full_sync)
+        self.custom_fields_sync(full_sync)
         self.departments_sync(full_sync)
         self.events_sync(full_sync)
         self.invoices_sync(full_sync)
@@ -173,6 +186,7 @@ class App:
         status = {}
         status['companies'] = self.companies.status()
         status['contacts'] = self.contacts.status()
+        status['custom_fields'] = self.custom_fields.status()
         status['departments'] = self.departments.status()
         status['events'] = self.events.status()
         status['invoices'] = self.invoices.status()
@@ -191,6 +205,8 @@ class App:
         try:
             argh.dispatch_commands([
                 self.companies_sync,
+                self.contacts_sync,
+                self.custom_fields_sync,
                 self.departments_sync,
                 self.events_sync,
                 self.invoices_sync,
