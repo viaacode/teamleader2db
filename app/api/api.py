@@ -21,3 +21,4 @@ api_router.include_router(
     prefix="/health",
     tags=["Health check"]
 )
+

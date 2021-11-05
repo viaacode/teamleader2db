@@ -28,4 +28,4 @@ app:
     invoices_table: 'tl_invoices'
     projects_table: 'tl_projects'
     users_table: 'tl_users'
-
+    custom_fields_table: 'tl_custom_fields'

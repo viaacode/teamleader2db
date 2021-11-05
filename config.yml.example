@@ -28,4 +28,4 @@ app:
     invoices_table: !ENV ${INVOICES_TABLE}
     projects_table: !ENV ${PROJECTS_TABLE}
     users_table: !ENV ${USERS_TABLE}
-
+    custom_fields_table: !ENV ${CUSTOM_FIELDS_TABLE}
