@@ -59,26 +59,28 @@ Then visit http://localhost:8080
 Use the makefile to execute the integration and unit tests:
 ```
 $ make test
-===================================== test session starts =====================================
-platform darwin -- Python 3.8.5, pytest-5.3.5, py-1.10.0, pluggy-0.13.1
-rootdir: /Users/wschrep/FreelanceWork/VIAA/teamleader2db
-plugins: recording-0.11.0, cov-2.8.1, mock-3.5.1
-collected 68 items
+================================== test session starts ===================================
+platform darwin -- Python 3.9.7, pytest-5.3.5, py-1.10.0, pluggy-0.13.1
+rootdir: /Users/wschrep/FreelanceWork/VIAA/teamleader2db, inifile: pytest.ini
+plugins: cov-2.8.1, mock-3.5.1
+collected 85 items                                                                       
 
-tests/api/test_api.py .....                                                             [  7%]
-tests/integration/test_sync.py .......                                                  [ 17%]
-tests/unit/test_app.py ....                                                             [ 23%]
-tests/unit/comm/test_companies.py ......                                                [ 32%]
-tests/unit/comm/test_departments.py ......                                              [ 41%]
-tests/unit/comm/test_events.py ......                                                   [ 50%]
-tests/unit/comm/test_invoices.py ......                                                 [ 58%]
-tests/unit/comm/test_projects.py ......                                                 [ 67%]
-tests/unit/comm/test_sqlwrapper.py ...                                                  [ 72%]
-tests/unit/comm/test_teamleader_auth.py ......                                          [ 80%]
-tests/unit/comm/test_teamleader_client.py .......                                       [ 91%]
-tests/unit/comm/test_users.py ......                                                    [100%]
+tests/api/test_api.py .........                                                    [ 10%]
+tests/integration/test_sync.py .......                                             [ 18%]
+tests/unit/test_app.py ..s.                                                        [ 23%]
+tests/unit/comm/test_companies.py ......                                           [ 30%]
+tests/unit/comm/test_contacts.py .......                                           [ 38%]
+tests/unit/comm/test_custom_fields.py ......                                       [ 45%]
+tests/unit/comm/test_departments.py ......                                         [ 52%]
+tests/unit/comm/test_events.py ......                                              [ 60%]
+tests/unit/comm/test_invoices.py ......                                            [ 67%]
+tests/unit/comm/test_projects.py ......                                            [ 74%]
+tests/unit/comm/test_sqlwrapper.py ...                                             [ 77%]
+tests/unit/comm/test_teamleader_auth.py ......                                     [ 84%]
+tests/unit/comm/test_teamleader_client.py .......                                  [ 92%]
+tests/unit/comm/test_users.py ......                                               [100%]
 
-===================================== 68 passed in 1.78s ======================================
+============================= 84 passed, 1 skipped in 1.58s ==============================
 ```
 
 ## Testing code coverage report
@@ -87,55 +89,59 @@ The makefile has a nice target called 'coverage' use this to make a testing cove
 
 ```
 $ make coverage
-=================================== test session starts ====================================
-platform darwin -- Python 3.8.5, pytest-5.3.5, py-1.10.0, pluggy-0.13.1
-rootdir: /Users/wschrep/FreelanceWork/VIAA/teamleader2db
-plugins: recording-0.11.0, cov-2.8.1, mock-3.5.1
-collected 68 items                                                                         
+================================== test session starts ===================================
+platform darwin -- Python 3.9.7, pytest-5.3.5, py-1.10.0, pluggy-0.13.1
+rootdir: /Users/wschrep/FreelanceWork/VIAA/teamleader2db, inifile: pytest.ini
+plugins: cov-2.8.1, mock-3.5.1
+collected 85 items                                                                       
 
-tests/api/test_api.py .....                                                          [  7%]
-tests/integration/test_sync.py .......                                               [ 17%]
-tests/unit/test_app.py ....                                                          [ 23%]
-tests/unit/comm/test_companies.py ......                                             [ 32%]
-tests/unit/comm/test_departments.py ......                                           [ 41%]
-tests/unit/comm/test_events.py ......                                                [ 50%]
-tests/unit/comm/test_invoices.py ......                                              [ 58%]
-tests/unit/comm/test_projects.py ......                                              [ 67%]
-tests/unit/comm/test_sqlwrapper.py ...                                               [ 72%]
-tests/unit/comm/test_teamleader_auth.py ......                                       [ 80%]
-tests/unit/comm/test_teamleader_client.py .......                                    [ 91%]
-tests/unit/comm/test_users.py ......                                                 [100%]
+tests/api/test_api.py .........                                                    [ 10%]
+tests/integration/test_sync.py .......                                             [ 18%]
+tests/unit/test_app.py ..s.                                                        [ 23%]
+tests/unit/comm/test_companies.py ......                                           [ 30%]
+tests/unit/comm/test_contacts.py .......                                           [ 38%]
+tests/unit/comm/test_custom_fields.py ......                                       [ 45%]
+tests/unit/comm/test_departments.py ......                                         [ 52%]
+tests/unit/comm/test_events.py ......                                              [ 60%]
+tests/unit/comm/test_invoices.py ......                                            [ 67%]
+tests/unit/comm/test_projects.py ......                                            [ 74%]
+tests/unit/comm/test_sqlwrapper.py ...                                             [ 77%]
+tests/unit/comm/test_teamleader_auth.py ......                                     [ 84%]
+tests/unit/comm/test_teamleader_client.py .......                                  [ 92%]
+tests/unit/comm/test_users.py ......                                               [100%]
 
----------- coverage: platform darwin, python 3.8.5-final-0 -----------
+---------- coverage: platform darwin, python 3.9.7-final-0 -----------
 Name                            Stmts   Miss  Cover
 ---------------------------------------------------
 app/__init__.py                     0      0   100%
 app/api/__init__.py                 0      0   100%
-app/api/api.py                      5      0   100%
+app/api/api.py                      6      0   100%
 app/api/routers/__init__.py         0      0   100%
+app/api/routers/export.py          34      1    97%
 app/api/routers/health.py           5      0   100%
 app/api/routers/sync.py            32      3    91%
-app/app.py                         98      8    92%
+app/app.py                        108      8    93%
 app/comm/__init__.py                0      0   100%
 app/comm/psql_wrapper.py           21      0   100%
 app/comm/teamleader_client.py     123     11    91%
 app/models/__init__.py              0      0   100%
 app/models/companies.py             8      0   100%
-app/models/contacts.py              8      0   100%
+app/models/contacts.py             52      2    96%
+app/models/custom_fields.py         8      0   100%
 app/models/departments.py           8      0   100%
 app/models/events.py                8      0   100%
 app/models/invoices.py              8      0   100%
 app/models/projects.py              8      0   100%
-app/models/sync_model.py           37      5    86%
+app/models/sync_model.py           35      3    91%
 app/models/teamleader_auth.py      29      0   100%
 app/models/users.py                 8      0   100%
-app/server.py                      12      0   100%
+app/server.py                      14      0   100%
 ---------------------------------------------------
-TOTAL                             418     27    94%
+TOTAL                             515     28    95%
 Coverage HTML written to dir htmlcov
 
 
-==================================== 68 passed in 2.91s ===================================
+============================= 84 passed, 1 skipped in 3.05s ==============================
 ```
 
 
