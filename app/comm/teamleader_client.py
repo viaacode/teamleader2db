@@ -265,7 +265,7 @@ class TeamleaderClient:
     def current_user(self):
         return self.request_page('/users.me')
 
-    def list_custom_fields(self, page=1, page_size=20):
+    def list_custom_fields(self, page=1, page_size=20, updated_since: datetime = None):
         return self.request_page('/customFieldDefinitions.list', page, page_size)
 
     def get_custom_field(self, uid):
