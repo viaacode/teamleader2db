@@ -3,9 +3,9 @@
 #
 #  @Author: Walter Schreppers
 #
-#   app/models/sync.py
+#   app/models/sync_params.py
 #
-#   Contact and Company sync parameters
+#   Teamleader sync parameters used in POST /sync/teamleader call
 #
 from pydantic import BaseModel, Field
 
@@ -14,10 +14,8 @@ class SyncParams(BaseModel):
     full_sync: bool = Field(
         False,
         description="""
-        True syns all records.
-        False sync records since the modified_since date.
-        Setting full_sync to False and not specifying modified_since is allowed
-        in this case current_date - 2 days is taken as starting date.
+        True:  syns all records.
+        False: only syncs starting from max last_modified timestamp in database.
         """
     )
 
