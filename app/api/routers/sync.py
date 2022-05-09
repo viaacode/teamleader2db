@@ -9,8 +9,9 @@
 #   last sync or running sync job
 #
 from fastapi import APIRouter, BackgroundTasks
-from typing import Optional
 from app.app import App as SyncApp
+from app.models.sync_params import SyncParams
+
 
 router = APIRouter()
 
@@ -50,16 +51,15 @@ async def teamleader_sync_status():
 @router.post("/teamleader")
 async def start_teamleader_sync(
     background_tasks: BackgroundTasks,
-    full_sync: Optional[bool] = False
+    params: SyncParams
 ):
-
     if not worker.teamleader_running:
-        background_tasks.add_task(worker.teamleader_job, full_sync)
+        background_tasks.add_task(worker.teamleader_job, params.full_sync)
         status = 'Teamleader sync started'
     else:
         status = 'Teamleader sync was already running'
 
     return {
         "status": status,
-        "full_sync": full_sync
+        "full_sync": params.full_sync
     }
