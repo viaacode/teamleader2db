@@ -23,13 +23,19 @@ class TestApi:
         return TestClient(app)
 
     def test_teamleader_full_sync(self, client):
-        response = client.post("/sync/teamleader?full_sync=true")
+        response = client.post(
+            "/sync/teamleader",
+            json={"full_sync": True}
+        )
         assert response.status_code == 200
         content = response.json()
         assert 'Teamleader sync started' in content['status']
 
     def test_teamleader_delta_sync(self, client):
-        response = client.post("/sync/teamleader?full_sync=false")
+        response = client.post(
+            "/sync/teamleader",
+            json={"full_sync": False}
+        )
         assert response.status_code == 200
         content = response.json()
         assert 'Teamleader sync started' in content['status']

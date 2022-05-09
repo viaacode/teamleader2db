@@ -80,6 +80,6 @@ code_callback_example:
 .PHONY: server
 server:
 	. python_env/bin/activate; \
-	uvicorn app.server:app --reload --port 8080 --no-access-log
+	uvicorn app.server:app --reload --port 8080 --no-access-log --reload-dir app
 
 
