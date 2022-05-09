@@ -14,8 +14,8 @@ class SyncParams(BaseModel):
     full_sync: bool = Field(
         False,
         description="""
-        True:  syns all records.
-        False: only syncs starting from max last_modified timestamp in database.
+        True:  synchronizes all records.
+        False: only synchronizes starting from max last_modified timestamp in database.
         """
     )
 
