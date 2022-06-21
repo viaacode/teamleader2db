@@ -173,6 +173,8 @@ class TestContacts:
         assert csv_header[7].strip() == 'accountmanager'
 
         # test rows match up with fixture data above
-        assert csv_rows[1].strip() == ';;walter@meemoo.be;;http://website1.com;;;'
-        assert csv_rows[2].strip() == ';;somebodye@meemoo.be;0486118833;http://website2.com;;;'
+        assert csv_rows[1].strip(
+        ) == ';;walter@meemoo.be;;http://website1.com;;;'
+        assert csv_rows[2].strip(
+        ) == ';;somebodye@meemoo.be;0486118833;http://website2.com;;;'
         assert csv_rows[3].strip() == ';;;;;;beschrijving test;'

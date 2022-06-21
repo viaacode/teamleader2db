@@ -51,7 +51,8 @@ class TestApi:
         response = client.post("/export/export_csv")
         assert response.status_code == 200
         content = response.json()
-        assert "Contacts csv export started. Check status for completion" in content['status']
+        assert "Contacts csv export started. Check status for completion" in content[
+            'status']
 
     def test_contact_csv_status_after_export(self, client):
         response = client.get("/export/export_status")

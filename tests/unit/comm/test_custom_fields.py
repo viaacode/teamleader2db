@@ -41,7 +41,8 @@ class TestCustomFields:
     def test_prepare_vars_upsert(self, custom_fields):
         tlres = TeamleaderEntryMock()
         tlres.attributes['name'] = 'meemoo project'
-        value = custom_fields._prepare_vars_upsert(asdict(tlres), 'custom_fields')
+        value = custom_fields._prepare_vars_upsert(
+            asdict(tlres), 'custom_fields')
         assert value == (
             tlres.id,
             'custom_fields',
@@ -62,8 +63,10 @@ class TestCustomFields:
         custom_fields.upsert_results(results)
 
         # The transformed mock teamleader result as tuple
-        val1 = custom_fields._prepare_vars_upsert(asdict(result_1), 'custom_fields')
-        val2 = custom_fields._prepare_vars_upsert(asdict(result_2), 'custom_fields')
+        val1 = custom_fields._prepare_vars_upsert(
+            asdict(result_1), 'custom_fields')
+        val2 = custom_fields._prepare_vars_upsert(
+            asdict(result_2), 'custom_fields')
 
         assert psql_wrapper_mock.executemany.call_count == 1
         assert psql_wrapper_mock.executemany.call_args[0][0] == custom_fields.upsert_entities_sql(
