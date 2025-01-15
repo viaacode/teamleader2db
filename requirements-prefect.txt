@@ -1,0 +1,4 @@
+prefect==2.14.12
+psycopg2-binary==2.9.5
+requests==2.31.0
+prefect-sqlalchemy
