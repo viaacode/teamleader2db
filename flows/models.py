@@ -30,8 +30,8 @@ class Resource(Enum):
     companies = auto()
     contacts = auto()
     invoices = auto()
-    departments = auto()
-    events = auto()
+    # departments = auto()
+    # events = auto()
     projects = auto()
     users = auto()
     customFieldDefinitions = auto()
@@ -45,8 +45,8 @@ class Resource(Enum):
             Resource.companies: DB_Tables.tl_companies,
             Resource.contacts: DB_Tables.tl_contacts,
             Resource.invoices: DB_Tables.tl_invoices,
-            Resource.departments: DB_Tables.tl_departments,
-            Resource.events: DB_Tables.tl_events,
+            # Resource.departments: DB_Tables.tl_departments,
+            # Resource.events: DB_Tables.tl_events,
             Resource.projects: DB_Tables.tl_projects,
             Resource.users: DB_Tables.tl_users,
             Resource.customFieldDefinitions: DB_Tables.tl_custom_fields,
