@@ -8,6 +8,12 @@ from database import *
 from teamleader import *
 
 
+class TestingConfig:
+    tl_api_uri: str
+    tl_auth_uri: str
+    db_conn: Connection
+
+
 def prepare_info_list(infos: list[TL_ResponseInfo]) -> list[tuple]:
     """
     Prepare the Teamleader responses for upload to the database.
@@ -26,7 +32,7 @@ def sync_teamleader_resource(
     auth: TL_Auth,
 ) -> TL_Auth:
     """
-    Sync a Teamleader resource (companies, users, contacts, etc.) to the etl_harvest database.
+    Sync a Teamleader resource (e.g. companies, users, contacts, etc.) to the etl_harvest database.
 
     TL_Auth is returned from this flow because `refresh_auth_token` might have been during the execution of this flow.
     """
@@ -85,14 +91,22 @@ def sync_teamleader_resource(
 @flow(name="Teamleader2db")
 def main_flow(
     tl_client: TL_Client,
-    tl_api_uri: str = "https://api.focus.teamleader.eu",
-    tl_auth_uri: str = "https://focus.teamleader.eu/oauth2",
     db_block_name: str = "etl-harvest",
     full_sync: bool = False,
-    test_db_conn: Optional[Connection] = None,
+    testing_config: Optional[TestingConfig] = None,
 ):
+    """
+    Sync all Teamleader resources (companies, users, contracts, etc.) to the etl_harvest database.
+    """
+    if testing_config is None:
+        conn = connect_database(db_block_name)
+        tl_api_uri: str = "https://api.focus.teamleader.eu"
+        tl_auth_uri: str = "https://focus.teamleader.eu/oauth2"
+    else:
+        conn = testing_config.db_conn
+        tl_api_uri = testing_config.tl_api_uri
+        tl_auth_uri = testing_config.tl_auth_uri
 
-    conn = connect_database(db_block_name) if test_db_conn is None else test_db_conn
     create_teamleader_auth_table(conn)
     auth = get_auth_tokens_from_db(conn, tl_auth_uri, tl_client)
 
