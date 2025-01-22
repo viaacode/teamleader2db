@@ -1,6 +1,6 @@
 from typing import Optional, Any, Union
 from datetime import datetime
-from enum import Enum, auto
+from enum import Enum
 
 from pydantic import BaseModel, Field, SecretStr, field_serializer
 from prefect.blocks.system import String, Secret
@@ -131,7 +131,6 @@ class TL_Response(BaseModel):
     ratelimit_remaining: int
     ratelimit_reset: datetime
     data: Union[list[dict[str, Any]], dict[str, Any]]
-    auth: TL_Auth
 
 
 class TL_ResponseList(BaseModel):
@@ -139,7 +138,6 @@ class TL_ResponseList(BaseModel):
     ratelimit_remaining: int
     ratelimit_reset: datetime
     data: list[dict[str, Any]]
-    auth: TL_Auth
 
 
 class TL_ResponseInfo(BaseModel):
@@ -147,7 +145,6 @@ class TL_ResponseInfo(BaseModel):
     ratelimit_remaining: int
     ratelimit_reset: datetime
     data: dict[str, Any]
-    auth: TL_Auth
 
 
 def serialize(req) -> dict[str, Any]:

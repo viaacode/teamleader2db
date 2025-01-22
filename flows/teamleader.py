@@ -59,14 +59,16 @@ def request_teamleader_info(
     req: TL_RequestInfo,
     auth: TL_Auth,
     conn: Connection,
-) -> TL_ResponseInfo:
-    response = request_teamleader(req, auth, conn)
-    return TL_ResponseInfo(
-        resource=response.resource,
-        ratelimit_remaining=response.ratelimit_remaining,
-        ratelimit_reset=response.ratelimit_reset,
-        data=cast(dict[str, Any], response.data),
-        auth=response.auth,
+) -> Tuple[TL_ResponseInfo, TL_Auth]:
+    response, auth = request_teamleader(req, auth, conn)
+    return (
+        TL_ResponseInfo(
+            resource=response.resource,
+            ratelimit_remaining=response.ratelimit_remaining,
+            ratelimit_reset=response.ratelimit_reset,
+            data=cast(dict[str, Any], response.data),
+        ),
+        auth,
     )
 
 
@@ -74,14 +76,16 @@ def request_teamleader_list(
     req: TL_RequestList,
     auth: TL_Auth,
     conn: Connection,
-) -> TL_ResponseList:
-    response = request_teamleader(req, auth, conn)
-    return TL_ResponseList(
-        resource=response.resource,
-        ratelimit_remaining=response.ratelimit_remaining,
-        ratelimit_reset=response.ratelimit_reset,
-        data=cast(list[dict[str, Any]], response.data),
-        auth=response.auth,
+) -> Tuple[TL_ResponseList, TL_Auth]:
+    response, auth = request_teamleader(req, auth, conn)
+    return (
+        TL_ResponseList(
+            resource=response.resource,
+            ratelimit_remaining=response.ratelimit_remaining,
+            ratelimit_reset=response.ratelimit_reset,
+            data=cast(list[dict[str, Any]], response.data),
+        ),
+        auth,
     )
 
 
@@ -94,7 +98,7 @@ def request_teamleader(
     req: Union[TL_RequestList, TL_RequestInfo],
     auth: TL_Auth,
     conn: Connection,
-) -> TL_Response:
+) -> Tuple[TL_Response, TL_Auth]:
     logger = get_run_logger()
     logger.info(f"POST request - {req}")
 
@@ -119,11 +123,10 @@ def request_teamleader(
         ratelimit_remaining=int(response.headers["X-RateLimit-Remaining"]),
         ratelimit_reset=datetime.fromisoformat(response.headers["X-RateLimit-Reset"]),
         data=response.json()["data"],
-        auth=auth,
     )
 
     if response.ratelimit_remaining < 5:
         logger.info("Requests rate limit low. Sleeping for 60 seconds...")
         sleep(60)
 
-    return response
+    return response, auth

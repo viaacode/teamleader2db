@@ -61,8 +61,7 @@ def sync_teamleader_resource(
     while True:
         req = RequestList(page=page)
 
-        response_list = request_teamleader_list(req, auth, conn)
-        auth = response_list.auth
+        response_list, auth = request_teamleader_list(req, auth, conn)
         page += 1
         total += len(response_list.data)
 
@@ -72,7 +71,7 @@ def sync_teamleader_resource(
         details = []
         for item in response_list.data:
             req = RequestInfo(id=item["id"])
-            info = request_teamleader_info(req, auth, conn)
+            info, auth = request_teamleader_info(req, auth, conn)
             details.append(info)
 
         rows = prepare_info_list(details)
@@ -121,6 +120,7 @@ if __name__ == "__main__":
         full_sync=True,
         resources=[
             Resource.customFieldDefinitions,
-            Resource.invoices,
+            # Resource.invoices,
+            # Resource.departments,
         ],
     )
