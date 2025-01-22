@@ -28,14 +28,14 @@ class Resource(Enum):
     Names should be copied exactly.
     """
 
-    companies = auto()
-    contacts = auto()
-    invoices = auto()
-    departments = auto()
-    events = auto()
-    projects = auto()
-    users = auto()
-    customFieldDefinitions = auto()
+    companies = "companies"
+    contacts = "contacts"
+    invoices = "invoices"
+    departments = "departments"
+    events = "events"
+    projects = "projects"
+    users = "users"
+    customFieldDefinitions = "customFieldDefinitions"
 
     @classmethod
     def get_db_table_name(cls, resource: "Resource") -> str:

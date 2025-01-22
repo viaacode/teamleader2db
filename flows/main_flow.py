@@ -1,7 +1,7 @@
 import json
 from functools import partial
 
-from prefect import flow, get_run_logger
+from prefect import flow, get_run_logger, Flow
 
 from models import *
 from database import *
@@ -82,7 +82,7 @@ def sync_teamleader_resource(
     return auth
 
 
-@flow(name="Teamleader2db")
+@flow(name="teamleader2db")
 def main_flow(
     tl_client_id_block_name: str = "teamleader-client-id",
     tl_client_secret_block_name: str = "teamleader-client-secret",
@@ -106,7 +106,10 @@ def main_flow(
     # If a subflow fails, its exception is caught so that subsequent subflows may still execute.
     for resource in resources:
         try:
-            auth = sync_teamleader_resource(tl_api_uri, resource, full_sync, conn, auth)
+            sync_resource_flow = cast(Flow, sync_teamleader_resource).with_options(
+                name=f"Sync {resource.value}"
+            )
+            auth = sync_resource_flow(tl_api_uri, resource, full_sync, conn, auth)
         except TeamleaderRequestException:
             logger.info(f"Sync of resource {resource.name} failed.")
 
