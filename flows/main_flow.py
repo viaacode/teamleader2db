@@ -58,15 +58,20 @@ def sync_teamleader_resource(
 
     page = 1
     total = 0
+    prev_response = None
     while True:
         req = RequestList(page=page)
-
         response_list, auth = request_teamleader_list(req, auth, conn)
-        page += 1
-        total += len(response_list.data)
 
         if len(response_list.data) == 0:
             break
+
+        if prev_response == response_list.data:
+            break
+
+        page += 1
+        total += len(response_list.data)
+        prev_response = response_list.data
 
         details = []
         for item in response_list.data:
@@ -119,8 +124,8 @@ if __name__ == "__main__":
         tl_client_secret_block_name="teamleader-client-secret",
         full_sync=True,
         resources=[
-            Resource.customFieldDefinitions,
+            # Resource.customFieldDefinitions,
             # Resource.invoices,
-            # Resource.departments,
+            Resource.departments,
         ],
     )
