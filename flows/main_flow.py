@@ -8,12 +8,6 @@ from database import *
 from teamleader import *
 
 
-class TestingConfig:
-    tl_api_uri: str
-    tl_auth_uri: str
-    db_conn: Connection
-
-
 def prepare_info_list(infos: list[TL_ResponseInfo]) -> list[tuple]:
     """
     Prepare the Teamleader responses for upload to the database.
@@ -90,23 +84,19 @@ def sync_teamleader_resource(
 
 @flow(name="Teamleader2db")
 def main_flow(
-    tl_client: TL_Client,
+    tl_client_id_block_name: str = "teamleader-client-id",
+    tl_client_secret_block_name: str = "teamleader-client-secret",
     db_block_name: str = "etl-harvest",
-    full_sync: bool = False,
+    tl_api_uri: str = "https://api.focus.teamleader.eu",
+    tl_auth_uri: str = "https://focus.teamleader.eu/oauth2",
     resources: Optional[list[Resource]] = None,
-    testing_config: Optional[TestingConfig] = None,
+    full_sync: bool = False,
 ):
     """
     Sync all Teamleader resources (companies, users, contracts, etc.) to the etl_harvest database.
     """
-    if testing_config is None:
-        conn = connect_database(db_block_name)
-        tl_api_uri: str = "https://api.focus.teamleader.eu"
-        tl_auth_uri: str = "https://focus.teamleader.eu/oauth2"
-    else:
-        conn = testing_config.db_conn
-        tl_api_uri = testing_config.tl_api_uri
-        tl_auth_uri = testing_config.tl_auth_uri
+    tl_client = TL_Client.load(tl_client_id_block_name, tl_client_secret_block_name)
+    conn = connect_database(db_block_name)
 
     logger = get_run_logger()
     create_teamleader_auth_table(conn)
@@ -122,13 +112,9 @@ def main_flow(
 
 
 if __name__ == "__main__":
-    from os import environ
-
     main_flow(
-        tl_client=TL_Client(
-            client_id=environ["TL_CLIENT_ID"],
-            client_secret=SecretStr(environ["TL_CLIENT_SECRET"]),
-        ),
+        tl_client_id_block_name="teamleader-client-id",
+        tl_client_secret_block_name="teamleader-client-secret",
         full_sync=True,
         resources=[
             Resource.customFieldDefinitions,

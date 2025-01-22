@@ -3,6 +3,7 @@ from datetime import datetime
 from enum import Enum, auto
 
 from pydantic import BaseModel, Field, SecretStr, field_serializer
+from prefect.blocks.system import String, Secret
 
 
 class DB_Tables:
@@ -61,6 +62,16 @@ class TL_Client(BaseModel):
 
     client_id: str
     client_secret: SecretStr
+
+    @staticmethod
+    def load(id_block_name: str, secret_block_name: str):
+        id: String = String.load(id_block_name)
+        secret: Secret = Secret.load(secret_block_name)
+
+        return TL_Client(
+            client_id=id.value,
+            client_secret=SecretStr(secret.value.get_secret_value()),
+        )
 
 
 class TL_Auth(BaseModel):
