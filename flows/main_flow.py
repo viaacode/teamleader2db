@@ -24,7 +24,12 @@ def sync_teamleader_resource(
     full_sync: bool,
     conn: Connection,
     auth: TL_Auth,
-):
+) -> TL_Auth:
+    """
+    Sync a Teamleader resource (companies, users, contacts, etc.) to the etl_harvest database.
+
+    TL_Auth is returned from this flow because `refresh_auth_token` might have been during the execution of this flow.
+    """
 
     logger = get_run_logger()
     resource_table_name = Resource.get_db_table_name(resource)
@@ -74,6 +79,8 @@ def sync_teamleader_resource(
         upsert_into_table(conn, resource_table_name, rows)
         logger.info(f"Synced {total} {resource.name} items to {resource_table_name}")
 
+    return auth
+
 
 @flow(name="Teamleader2db")
 def main_flow(
@@ -89,7 +96,8 @@ def main_flow(
     create_teamleader_auth_table(conn)
     auth = get_auth_tokens_from_db(conn, tl_auth_uri, tl_client)
 
-    sync_teamleader_resource(tl_api_uri, Resource.companies, full_sync, conn, auth)
+    for resource in Resource:
+        auth = sync_teamleader_resource(tl_api_uri, resource, full_sync, conn, auth)
 
 
 if __name__ == "__main__":
