@@ -10,6 +10,10 @@ from models import *
 from database import *
 
 
+class TeamleaderRequestException(Exception):
+    pass
+
+
 @task
 def refresh_auth_token(conn: Connection, auth: TL_Auth) -> TL_Auth:
     logger = get_run_logger()
@@ -106,8 +110,8 @@ def request_teamleader(
         response = requests_post(req.path, headers=headers, data=data)
 
     if response.status_code != 200:
-        raise Exception(
-            f"Could not complete teamleader request. Status code {response.status_code} - {response.reason}"
+        raise TeamleaderRequestException(
+            f"Could not complete teamleader request. Status code {response.status_code} - {response.reason} - {response.text}"
         )
 
     response = TL_Response(

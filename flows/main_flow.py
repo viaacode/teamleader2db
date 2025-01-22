@@ -93,6 +93,7 @@ def main_flow(
     tl_client: TL_Client,
     db_block_name: str = "etl-harvest",
     full_sync: bool = False,
+    resources: Optional[list[Resource]] = None,
     testing_config: Optional[TestingConfig] = None,
 ):
     """
@@ -107,11 +108,17 @@ def main_flow(
         tl_api_uri = testing_config.tl_api_uri
         tl_auth_uri = testing_config.tl_auth_uri
 
+    logger = get_run_logger()
     create_teamleader_auth_table(conn)
     auth = get_auth_tokens_from_db(conn, tl_auth_uri, tl_client)
+    resources = resources if resources is not None else [r for r in Resource]
 
-    for resource in Resource:
-        auth = sync_teamleader_resource(tl_api_uri, resource, full_sync, conn, auth)
+    # If a subflow fails, its exception is caught so that subsequent subflows may still execute.
+    for resource in resources:
+        try:
+            auth = sync_teamleader_resource(tl_api_uri, resource, full_sync, conn, auth)
+        except TeamleaderRequestException:
+            logger.info(f"Sync of resource {resource.name} failed.")
 
 
 if __name__ == "__main__":
@@ -123,4 +130,8 @@ if __name__ == "__main__":
             client_secret=SecretStr(environ["TL_CLIENT_SECRET"]),
         ),
         full_sync=True,
+        resources=[
+            Resource.customFieldDefinitions,
+            Resource.invoices,
+        ],
     )
