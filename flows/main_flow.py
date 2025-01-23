@@ -17,7 +17,7 @@ def prepare_info_list(infos: list[TL_ResponseInfo]) -> list[tuple]:
     ]
 
 
-@flow(name="Teamleader2db resource sync")
+@flow(name="teamleader2db resource sync")
 def sync_teamleader_resource(
     tl_uri: str,
     resource: Resource,
@@ -111,7 +111,7 @@ def main_flow(
     for resource in resources:
         try:
             sync_resource_flow = cast(Flow, sync_teamleader_resource).with_options(
-                name=f"Sync {resource.value}"
+                name=f"teamleader2db sync {resource.value}"
             )
             auth = sync_resource_flow(tl_api_uri, resource, full_sync, conn, auth)
         except TeamleaderRequestException:
