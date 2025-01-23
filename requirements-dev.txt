@@ -1,0 +1,3 @@
+-r requirements.txt
+prefect==2.14.12
+griffe==0.49.0
