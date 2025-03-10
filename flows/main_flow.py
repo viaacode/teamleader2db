@@ -86,7 +86,7 @@ def sync_teamleader_resource(
     return auth
 
 
-@flow(name="teamleader2db")
+@flow(name="prefect_flow_teamleader2db")
 def main_flow(
     tl_client_id_block_name: str = "teamleader-client-id",
     tl_client_secret_block_name: str = "teamleader-client-secret",
