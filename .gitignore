@@ -126,3 +126,7 @@ config.yml
 
 #Docker env files
 *env
+
+# openssl certificates
+cert.pem
+key.pem
